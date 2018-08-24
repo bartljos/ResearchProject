@@ -84,19 +84,36 @@ public class StateMachine {
 	
 	private void buildState(String word)
 	{
+		int currentState = 0;
 		if(this.transList.size() <= 0)
-		{
-			this.transList.add(new ArrayList<Integer>());
-			for(int i = 0; i < this.transChars.size(); i++)
-			{
-				this.transList.get(0).add(0);
-			}
-		}
-		
+			this.createNewState(0);
+		// start processing word
 		for(int i = 0; i < word.length(); i++)
 		{
+
+		
 			
 		}
-
+		//end processing word
+		
 	}	
+	
+	private void fillTransitionList(int index)
+	{
+		for(int i = 0; i < this.transChars.size(); i++)
+			this.transList.get(index).add(0);
+	}
+	
+	private int createNewState(int index)
+	{
+
+		if(this.transList.size() <= index)
+		{
+			this.transList.add(new ArrayList<Integer>());
+			this.fillTransitionList(this.transList.size()-1);
+			this.numStates++;
+			
+		}
+		return 0;
+	}
 }
