@@ -10,6 +10,7 @@ public class StateMachine {
 	ArrayList<ArrayList<Integer>> transList = new ArrayList<ArrayList<Integer>>();
 	ArrayList<Character> transChars = new ArrayList<Character>();
 	ArrayList<Integer> acceptingStates = new ArrayList<Integer>();
+
 	int numStates = 0;
 	
 	public boolean readDictionary()
@@ -31,9 +32,10 @@ public class StateMachine {
 		//for(int i = 0; i < dictionary.size(); i++)
 		//	System.out.println(dictionary.get(i));
 		
+		
 		for(int i = 0; i < this.transList.size(); i++)
 		{
-			System.out.println(this.transList.get(i).toString());
+			System.out.println(i + " " + this.transList.get(i).toString());
 		}
 		return true;
 	}
@@ -43,8 +45,9 @@ public class StateMachine {
 		if(this.dictionary.size() <= 0)
 		{
 			this.dictionary.add("cat");
-			//this.dictionary.add("rat");
+			this.dictionary.add("rat");
 			this.dictionary.add("cattering");
+			this.dictionary.add("rattle");
 			
 			for(int i = 0; i < this.dictionary.size(); i++)
 				System.out.println(this.dictionary.get(i));
@@ -56,9 +59,17 @@ public class StateMachine {
 		{
 			this.buildState(this.dictionary.get(i));
 		}
+		
+		
+		System.out.println("Accepting States: " + this.acceptingStates.toString());
+		System.out.println(this.transChars.size());
+		System.out.println("   "+ (this.transChars.toString()));
 		for(int i = 0; i < this.transList.size(); i ++)
 		{
-			System.out.println(this.transList.get(i) + " ");
+			if(this.acceptingStates.contains(i))
+				System.out.println(i + "A " + this.transList.get(i) + " ");
+			else
+				System.out.println(i + "  " + this.transList.get(i) + " ");
 		}
 		
 		return true;
@@ -77,9 +88,7 @@ public class StateMachine {
 				}
 			}
 		}
-		System.out.println(this.transChars.size());
-		System.out.println((this.transChars.toString()));
-
+		
 	}
 	
 	private void buildState(String word)
@@ -90,13 +99,50 @@ public class StateMachine {
 		// start processing word
 		for(int i = 0; i < word.length(); i++)
 		{
-
-		
-			
+			for(int j = 0; j < this.transChars.size(); j++)
+				if(word.charAt(i) == this.transChars.get(j))
+				{
+					if(this.transList.get(currentState).get(j) == 0)
+					{
+						int lastState = currentState;
+						currentState = this.transList.size();
+						this.createNewState(currentState);
+						this.transList.get(lastState).set(j, currentState);
+					}else
+					{
+						currentState = this.transList.get(currentState).get(j);
+					}
+				}
 		}
+		if(!this.acceptingStates.contains(currentState))
+			this.acceptingStates.add(currentState);
 		//end processing word
 		
 	}	
+	
+	private boolean verifyWord(String word)
+	{
+		int currentState = 0;
+		for(int i = 0; i < word.length(); i++)
+		{
+			for(int j = 0; j < this.transChars.size(); j++)
+				if(word.charAt(i) == this.transChars.get(j))
+				{
+					if(this.transList.get(currentState).get(j) == 0)
+					{
+						return false;
+					}else
+					{
+						currentState = this.transList.get(currentState).get(j);
+					}
+				}
+		}
+		if(this.acceptingStates.contains(currentState))
+		{
+			return true;
+		}
+		return false;
+	}
 	
 	private void fillTransitionList(int index)
 	{
@@ -104,16 +150,14 @@ public class StateMachine {
 			this.transList.get(index).add(0);
 	}
 	
-	private int createNewState(int index)
+	private void createNewState(int index)
 	{
 
-		if(this.transList.size() <= index)
-		{
-			this.transList.add(new ArrayList<Integer>());
-			this.fillTransitionList(this.transList.size()-1);
-			this.numStates++;
-			
-		}
-		return 0;
+		this.transList.add(new ArrayList<Integer>());
+		this.fillTransitionList(this.transList.size()-1);
+		this.numStates++;
+		
 	}
+	
+	
 }

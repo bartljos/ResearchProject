@@ -6,5 +6,6 @@ public class runner {
 		StateMachine fsm = new StateMachine();
 		//fsm.readDictionary();
 		fsm.buildFSM();
+		fsm.
 	}
 }
