@@ -17,7 +17,7 @@ public class StateMachine {
 	{
 		BufferedReader fr = null;
 		try {
-			fr = new BufferedReader(new FileReader("C:\\Users\\Josh\\Desktop\\SrRsrch Resources\\Dictionary\\wordlist.txt"));
+			fr = new BufferedReader(new FileReader("C:\\Users\\Josh\\Desktop\\SrRsrch Resources\\Dictionary\\en-US.dic"));
 			String word = "";
 			while((word = fr.readLine()) != null)
 			{
@@ -61,16 +61,16 @@ public class StateMachine {
 		}
 		
 		
-		System.out.println("Accepting States: " + this.acceptingStates.toString());
-		System.out.println(this.transChars.size());
-		System.out.println("   "+ (this.transChars.toString()));
-		for(int i = 0; i < this.transList.size(); i ++)
+		//System.out.println("Accepting States: " + this.acceptingStates.toString());
+		//System.out.println(this.transChars.size());
+		//System.out.println("   "+ (this.transChars.toString()));
+		/*for(int i = 0; i < this.transList.size(); i ++)
 		{
 			if(this.acceptingStates.contains(i))
 				System.out.println(i + "A " + this.transList.get(i) + " ");
 			else
 				System.out.println(i + "  " + this.transList.get(i) + " ");
-		}
+		}*/
 		
 		return true;
 	}
@@ -83,7 +83,7 @@ public class StateMachine {
 			{
 				if(!this.transChars.contains(this.dictionary.get(i).charAt(j)))
 				{
-					if(this.dictionary.get(i).charAt(j) >= 'A' && this.dictionary.get(i).charAt(j) <= 'z' || this.dictionary.get(i).charAt(j) == '-')
+					//if(this.dictionary.get(i).charAt(j) >= 'A' && this.dictionary.get(i).charAt(j) <= 'z' || this.dictionary.get(i).charAt(j) == '-')
 					this.transChars.add(this.dictionary.get(i).charAt(j));
 				}
 			}
@@ -120,12 +120,16 @@ public class StateMachine {
 		
 	}	
 	
-	private boolean verifyWord(String word)
+	public boolean verifyWord(String word)
 	{
+		System.out.println();
 		int currentState = 0;
 		for(int i = 0; i < word.length(); i++)
 		{
 			for(int j = 0; j < this.transChars.size(); j++)
+			{	
+				if(!this.transChars.contains(word.charAt(i)))
+					return false;
 				if(word.charAt(i) == this.transChars.get(j))
 				{
 					if(this.transList.get(currentState).get(j) == 0)
@@ -133,10 +137,13 @@ public class StateMachine {
 						return false;
 					}else
 					{
+						System.out.print(currentState + " --" + word.charAt(i) + "-->");
 						currentState = this.transList.get(currentState).get(j);
 					}
 				}
+			}
 		}
+		System.out.println(currentState);
 		if(this.acceptingStates.contains(currentState))
 		{
 			return true;
