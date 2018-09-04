@@ -40,17 +40,17 @@ public class StateMachine {
 		return true;
 	}
 	
+	public void addWord(String word)
+	{
+		this.dictionary.add(word);
+	}
+	
 	public boolean buildFSM()
 	{
 		if(this.dictionary.size() <= 0)
 		{
-			this.dictionary.add("cat");
-			this.dictionary.add("rat");
-			this.dictionary.add("cattering");
-			this.dictionary.add("rattle");
-			
-			for(int i = 0; i < this.dictionary.size(); i++)
-				System.out.println(this.dictionary.get(i));
+			System.out.println("no words");
+			return false;
 		}
 		
 		this.buildCharacterList();
