@@ -122,7 +122,7 @@ public class StateMachine {
 	
 	public boolean verifyWord(String word)
 	{
-		System.out.println();
+		
 		int currentState = 0;
 		for(int i = 0; i < word.length(); i++)
 		{
@@ -137,6 +137,8 @@ public class StateMachine {
 						return false;
 					}else
 					{
+						if(i == 0)
+							System.out.println();
 						System.out.print(currentState + " --" + word.charAt(i) + "-->");
 						currentState = this.transList.get(currentState).get(j);
 					}
@@ -144,10 +146,12 @@ public class StateMachine {
 			}
 		}
 		System.out.println(currentState);
+		
 		if(this.acceptingStates.contains(currentState))
 		{
 			return true;
 		}
+		
 		return false;
 	}
 	
