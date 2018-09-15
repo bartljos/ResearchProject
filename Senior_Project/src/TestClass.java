@@ -74,6 +74,12 @@ public class TestClass {
 		
 		ArrayList<String> words = fsm.readDictionary();
 		for(int i = 0; i < words.size(); i++)
-			System.out.println(words.get(i));
+			assertTrue(testWords.contains(words.get(i)));
+	}
+	
+	@Test
+	public void testEditDistanceAlgorithm()
+	{
+		
 	}
 }

@@ -104,20 +104,21 @@ public class StateMachine {
 			for(int j = 0; j < this.transChars.size(); j++)
 				if(word.charAt(i) == this.transChars.get(j))
 				{
-					if(this.transList.get(currentState).get(j)[0] == 0)
+					int statelist[] = new int[2];
+					statelist[1] = lastState;
+					lastState = currentState;
+					
+					if(this.transList.get(currentState).get(j)[0] == -1)
 					{
-						int statelist[] = new int[2];
-						statelist[1] = lastState;
-						lastState = currentState;
-						
 						currentState = this.transList.size();
 						this.createNewState(currentState);
-						statelist[0] = currentState;
-						this.transList.get(lastState).set(j, statelist);
+					
 					}else
-					{
 						currentState = this.transList.get(currentState).get(j)[0];
-					}
+	
+
+					statelist[0] = currentState;
+					this.transList.get(lastState).set(j, statelist);
 				}
 		}
 		
@@ -146,7 +147,7 @@ public class StateMachine {
 					return false;
 				if(word.charAt(i) == this.transChars.get(j))
 				{
-					if(this.transList.get(currentState).get(j)[0] == 0)
+					if(this.transList.get(currentState).get(j)[0] == -1)
 					{
 						return false;
 					}else
@@ -172,7 +173,7 @@ public class StateMachine {
 	private void fillTransitionList(int index)
 	{
 		for(int i = 0; i < this.transChars.size(); i++)
-			this.transList.get(index).add(new int[] {0,0});
+			this.transList.get(index).add(new int[] {-1, -1});
 	}
 	
 	private void createNewState(int index)
@@ -187,7 +188,7 @@ public class StateMachine {
 	public void printTransitionTable()
 	{
 		for(int i = 0; i < this.transChars.size(); i++)
-			System.out.print("   " + this.transChars.get(i) + "   ");
+			System.out.print("    " + this.transChars.get(i) + "   ");
 		System.out.println();
 		
 		for(int i = 0; i < this.transList.size(); i++)
@@ -203,12 +204,37 @@ public class StateMachine {
 		System.out.println("begin dictionary read");
 		ArrayList<String> dictionary = new ArrayList<String>();
 		
+		
+		int currentState = 0; int lastState = 0;
 		for(int i = 0; i < this.acceptingStates.size(); i++)
 		{
+			String w = "";
+			System.out.println("\nAccepting States:");
+			System.out.println(this.acceptingStates.get(i));
 			
+			currentState = this.acceptingStates.get(i);
 			
+			int j = 0;
+			while(this.transList.get(currentState).get(j)[1] == -1){j++;}
 			
+			while(currentState != 0)
+			{
+				lastState = currentState;
+				
+				//System.out.println("CurrentState: " + currentState);
+				
+				currentState = this.transList.get(currentState).get(j)[1];
+				//System.out.println("lastState: " + lastState + "  CurrentState: " + currentState);
+				
+				j = 0;
+				while(this.transList.get(currentState).get(j)[0] != lastState){j++;}
+				
+				w = this.transChars.get(j) + w;
+				
+			}
 			
+			System.out.println("Word associated with state:");
+			System.out.println(w);
 		}
 		
 		//System.out.println(dictionary.size());
