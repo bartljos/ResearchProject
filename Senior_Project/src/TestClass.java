@@ -8,11 +8,15 @@ import StateMachine.StateMachine;
 
 public class TestClass {
 
+	
+	
 	@Test
-	public void testFSM() 
+	public void testFSMDictionaryCheck() 
 	{
+		
 		StateMachine fsm = new StateMachine();
 		ArrayList<String> testWords = new ArrayList<String>();
+		
 		testWords.add("cat");
 		testWords.add("fat");
 		testWords.add("can");
@@ -44,6 +48,32 @@ public class TestClass {
 				}
 		
 	
+		fsm.printTransitionTable();
+	}
+	
+	@Test
+	public void runThroughDictionary()
+	{
+		StateMachine fsm = new StateMachine();
+		ArrayList<String> testWords = new ArrayList<String>();
 		
+		testWords.add("cat");
+		testWords.add("fat");
+		testWords.add("can");
+		testWords.add("dip");
+		
+		System.out.println("building state machine");
+	
+		
+		for(int i = 0; i < testWords.size(); i++)
+		{
+			fsm.addWord(testWords.get(i));
+			
+		}
+		fsm.buildFSM();
+		
+		ArrayList<String> words = fsm.readDictionary();
+		for(int i = 0; i < words.size(); i++)
+			System.out.println(words.get(i));
 	}
 }
