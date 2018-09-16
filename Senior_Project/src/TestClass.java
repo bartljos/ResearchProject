@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import org.junit.Test;
 
+import EditDistance.EditDistance;
 import StateMachine.StateMachine;
 
 public class TestClass {
@@ -80,6 +81,21 @@ public class TestClass {
 	@Test
 	public void testEditDistanceAlgorithm()
 	{
+		EditDistance ed = new EditDistance();
+		assertEquals(ed.getEditDistance("hilol", "hello"), 2);
+		
+		assertEquals(ed.getEditDistance("cats", "ctas"), 1);
+		
+		assertEquals(ed.getEditDistance("ctras", "carts"), 2);
+		
+		assertEquals(ed.getEditDistance("addiction", "dadection"), 2);
+	}
+	
+	@Test
+	public void testCandidateListAndThreshHold()
+	{
 		
 	}
+	
+	
 }
