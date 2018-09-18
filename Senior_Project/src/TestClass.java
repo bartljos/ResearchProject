@@ -84,11 +84,13 @@ public class TestClass {
 		EditDistance ed = new EditDistance();
 		assertEquals(ed.getEditDistance("hilol", "hello"), 2);
 		
-		assertEquals(ed.getEditDistance("cats", "ctas"), 1);
+		assertEquals(ed.getEditDistance("ctas", "cats"), 1);
 		
 		assertEquals(ed.getEditDistance("ctras", "carts"), 2);
 		
-		assertEquals(ed.getEditDistance("addiction", "dadection"), 2);
+		assertEquals(ed.getEditDistance("dadection", "addiction"), 2);
+		
+		assertEquals(ed.getEditDistance("ha", "hat"), 1);
 	}
 	
 	@Test

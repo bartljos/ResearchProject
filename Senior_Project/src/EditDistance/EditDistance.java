@@ -5,6 +5,13 @@ import java.util.ArrayList;
 public class EditDistance {
 	
 	ArrayList<String> candidates = new ArrayList<String>();
+	private int threshold = -1;
+	
+	
+	public EditDistance()
+	{
+		threshold = 5;
+	}
 	
 	public int getEditDistance(String w1, String w2)
 	{
@@ -68,7 +75,25 @@ public class EditDistance {
 		ed = matrix[w1.length()-1][w2.length()-1];
 		
 		System.out.println(w1 + " ----> " + w2 + " = " + ed + "\n\n");
+		
+		if (ed == threshold)
+		{
+			this.candidates.add(w2);
+		}else
+			if(ed < threshold)
+			{
+				threshold = ed;
+				this.candidates.clear();
+				this.candidates.add(w2);
+			}
+		for(int i = 0; i < this.candidates.size(); i++)
+			System.out.println(this.candidates.get(i));
 		return ed;
+	}
+	
+	public int getThreshold()
+	{
+		return this.threshold;
 	}
 	
 	
