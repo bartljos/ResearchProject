@@ -2,7 +2,19 @@ import java.util.Scanner;
 
 import StateMachine.StateMachine;
 
+/**
+ * @author Joshua Bartle
+ *
+ * This is the class containing the main method. This will be used for running the entire experiment
+ * after everything is verified to word using JUnit Tests
+ */
 public class runner {
+	
+	/**
+	 * main method 
+	 * This will be used with the final project but is currently not used while
+	 * code is developed using JUnit testing
+	 */
 	public static void main(String[] args)
 	{
 		StateMachine fsm = new StateMachine();

@@ -10,7 +10,9 @@ import StateMachine.StateMachine;
 public class TestClass {
 
 	
-	
+	/**
+	 * JUnit test for checking that verifying words with the FSM class works
+	 */
 	@Test
 	public void testFSMDictionaryCheck() 
 	{
@@ -52,6 +54,9 @@ public class TestClass {
 		fsm.printTransitionTable();
 	}
 	
+	/**
+	 * JUnit test for testing that the words from the dictionary can be retrieved with the FSM
+	 */
 	@Test
 	public void runThroughDictionary()
 	{
@@ -78,6 +83,9 @@ public class TestClass {
 			assertTrue(testWords.contains(words.get(i)));
 	}
 	
+	/**
+	 * JUnit test for the edit distance algorithm (EditDistance class)
+	 */
 	@Test
 	public void testEditDistanceAlgorithm()
 	{
@@ -93,11 +101,11 @@ public class TestClass {
 		assertEquals(ed.getEditDistance("ha", "hat"), 1);
 	}
 	
-	@Test
+	/*@Test 
 	public void testCandidateListAndThreshHold()
 	{
 		
-	}
+	}*/
 	
 	
 }

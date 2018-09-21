@@ -13,6 +13,12 @@ public class EditDistance {
 		threshold = 5;
 	}
 	
+	/**
+	 * 
+	 * @param w1, the first word (incorrect spelling)
+	 * @param w2, the second word (the word to be compared)
+	 * @return the edit distance between w1 and w2
+	 */
 	public int getEditDistance(String w1, String w2)
 	{
 		
@@ -91,12 +97,19 @@ public class EditDistance {
 		return ed;
 	}
 	
+	/**
+	 * @return the current threshold, or max edit distance allowed
+	 */
 	public int getThreshold()
 	{
 		return this.threshold;
 	}
 	
-	
+	/**
+	 * Function for getting the min value in an array
+	 * @param array, an array of integer values
+	 * @return, the minimum value in the array
+	 */
 	private int getMin(int[] array)
 	{
 		int min = array[0];
