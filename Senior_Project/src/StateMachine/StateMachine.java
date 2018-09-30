@@ -11,11 +11,23 @@ import java.util.ArrayList;
  */
 public class StateMachine {
 	
-	ArrayList<String> dictionary = new ArrayList<String>(); // words in the dictionary
-	ArrayList<ArrayList<int[]>> transList = new ArrayList<ArrayList<int[]>>(); // list of transitions
-	ArrayList<Character> transChars = new ArrayList<Character>(); // characters that are part of the transition table
-	ArrayList<Integer> acceptingStates = new ArrayList<Integer>(); // a list of accepting states (ends of words)
+	private ArrayList<String> dictionary = new ArrayList<String>(); // words in the dictionary
+	private ArrayList<ArrayList<int[]>> transList = new ArrayList<ArrayList<int[]>>(); // list of transitions
+	private ArrayList<Character> transChars = new ArrayList<Character>(); // characters that are part of the transition table
+	private ArrayList<Integer> acceptingStates = new ArrayList<Integer>(); // a list of accepting states (ends of words)
 	int numStates = 0; // current number of states
+	private static StateMachine fsm = null;
+	
+	
+	public static StateMachine getFSM()
+	{
+		if(fsm == null)
+		{
+			fsm = new StateMachine();
+			System.out.println("create FSM");
+		}
+		return fsm;
+	}
 	
 	/**
 	 * Function for reading in text file of words
@@ -50,8 +62,12 @@ public class StateMachine {
 	 */
 	public void addWord(String word)
 	{
+		if(word.charAt(word.length()-1) == '.')
+			word = word.substring(0, word.length()-2);
 		this.dictionary.add(word);
+		//System.out.println("dic: " + StateMachine.getFSM().dictionary.size());
 	}
+	
 	
 	/**
 	 * Function that takes each word in the dictionary and builds onto the transition
@@ -225,16 +241,15 @@ public class StateMachine {
 	 */
 	public ArrayList<String> readDictionary()
 	{
-		System.out.println("begin dictionary read");
+		//System.out.println("begin dictionary read");
 		ArrayList<String> dictionary = new ArrayList<String>();
-		
 		
 		int currentState = 0; int lastState = 0;
 		for(int i = 0; i < this.acceptingStates.size(); i++) // Go through all accepting states
 		{
 			String w = "";
-			System.out.println("\nAccepting States:");
-			System.out.println(this.acceptingStates.get(i));
+			//System.out.println("\nAccepting States:");
+			//System.out.println(this.acceptingStates.get(i));
 			
 			currentState = this.acceptingStates.get(i);
 			
@@ -254,9 +269,9 @@ public class StateMachine {
 				w = this.transChars.get(j) + w;
 				
 			}
-			
-			System.out.println("Word associated with state:");
-			System.out.println(w);
+			dictionary.add(w);
+			//System.out.println("Word associated with state:");
+			//System.out.println(w);
 		}
 		
 		//System.out.println(dictionary.size());

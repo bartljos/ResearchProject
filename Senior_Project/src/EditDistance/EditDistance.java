@@ -13,6 +13,10 @@ public class EditDistance {
 		threshold = 5;
 	}
 	
+	public ArrayList<String> getCandidates()
+	{
+		return this.candidates;
+	}
 	/**
 	 * 
 	 * @param w1, the first word (incorrect spelling)
@@ -22,7 +26,7 @@ public class EditDistance {
 	public int getEditDistance(String w1, String w2)
 	{
 		
-		System.out.println("\nrunning edit distance check:");
+		//System.out.println("\nrunning edit distance check:");
 		int ed = 0;
 		w1 = " " + w1;
 		w2 = " " + w2;
@@ -36,13 +40,13 @@ public class EditDistance {
 			matrix[0][j] = j;
 		
 		
-		for(int i = 0; i < w1.length(); i++)
+		/*for(int i = 0; i < w1.length(); i++)
 		{	for(int j = 0; j < w2.length(); j++)
 			{
 				System.out.print("  " + matrix[i][j]);
 			}
 			System.out.println();
-		}
+		}*/
 		
 		for(int i = 1; i < w1.length(); i++)
 		{	for(int j = 1; j < w2.length(); j++)
@@ -59,11 +63,11 @@ public class EditDistance {
 						
 				
 			}
-			System.out.println();
+			//System.out.println();
 		}
 		
-		System.out.print("\n ");
-		for(int i = 0; i < w2.length(); i++)
+		System.out.print("\n");
+		/*for(int i = 0; i < w2.length(); i++)
 		{	
 			System.out.print("  " + w2.charAt(i));
 		}
@@ -77,21 +81,22 @@ public class EditDistance {
 				System.out.print("  " + matrix[i][j]);
 			}
 			System.out.println();
-		}
+		}*/
 		ed = matrix[w1.length()-1][w2.length()-1];
 		
-		System.out.println(w1 + " ----> " + w2 + " = " + ed + "\n\n");
+		//System.out.println(w1 + " ----> " + w2 + " = " + ed + "\n\n");
 		
 		if (ed == threshold)
 		{
-			this.candidates.add(w2);
+			this.candidates.add(w2.substring(1));
 		}else
 			if(ed < threshold)
 			{
 				threshold = ed;
 				this.candidates.clear();
-				this.candidates.add(w2);
+				this.candidates.add(w2.substring(1));
 			}
+		System.out.println("candidates: ");
 		for(int i = 0; i < this.candidates.size(); i++)
 			System.out.println(this.candidates.get(i));
 		return ed;
@@ -119,5 +124,14 @@ public class EditDistance {
 				min = array[i];
 		
 		return min;
+	}
+	
+	public boolean clearCandidates()
+	{
+		this.candidates.clear();
+		if(this.candidates.isEmpty())
+			return true;
+		else
+			return false;
 	}
 }

@@ -13,7 +13,7 @@ public class TestClass {
 	/**
 	 * JUnit test for checking that verifying words with the FSM class works
 	 */
-	@Test
+	/*@Test
 	public void testFSMDictionaryCheck() 
 	{
 		
@@ -52,12 +52,12 @@ public class TestClass {
 		
 	
 		fsm.printTransitionTable();
-	}
+	}*/
 	
 	/**
 	 * JUnit test for testing that the words from the dictionary can be retrieved with the FSM
 	 */
-	@Test
+	/*@Test
 	public void runThroughDictionary()
 	{
 		StateMachine fsm = new StateMachine();
@@ -81,12 +81,12 @@ public class TestClass {
 		ArrayList<String> words = fsm.readDictionary();
 		for(int i = 0; i < words.size(); i++)
 			assertTrue(testWords.contains(words.get(i)));
-	}
+	}*/
 	
 	/**
 	 * JUnit test for the edit distance algorithm (EditDistance class)
 	 */
-	@Test
+	/*@Test
 	public void testEditDistanceAlgorithm()
 	{
 		EditDistance ed = new EditDistance();
@@ -99,13 +99,26 @@ public class TestClass {
 		assertEquals(ed.getEditDistance("dadection", "addiction"), 2);
 		
 		assertEquals(ed.getEditDistance("ha", "hat"), 1);
-	}
-	
-	/*@Test 
-	public void testCandidateListAndThreshHold()
-	{
-		
 	}*/
+	
+	@Test
+	public void testSentence()
+	{
+		StateMachine.getFSM();
+		String s = "The cat climbed up a tree tea";
+		
+		String words[] = s.split(" ");
+		for(int i = 0; i < words.length; i++)
+		{
+			StateMachine.getFSM().addWord(words[i]);
+			//System.out.println(StateMachine.getFSM().readDictionary().size());
+		}
+		//StateMachine.getFSM().addWord("climded");
+		StateMachine.getFSM().buildFSM();
+		
+		Algorithms alg = new Algorithms();
+		alg.useEditDistance("The cat climbed up a tee");
+	}
 	
 	
 }
