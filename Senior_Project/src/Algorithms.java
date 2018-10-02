@@ -5,9 +5,22 @@ import StateMachine.StateMachine;
 
 public class Algorithms {
 	
+	EditDistance ed = null;
+	private String text = "";
+	private int n = 1;
+	
+	public void setText(String text)
+	{
+		this.text = text;
+	}
+	
+	public void setN(int n)
+	{
+		this.n = n;
+	}
 	public String useEditDistance(String s)
 	{
-		EditDistance ed = new EditDistance();
+		ed = new EditDistance();
 		String words[] = s.split(" ");
 		
 		ArrayList<String> dic = StateMachine.getFSM().readDictionary();
@@ -18,8 +31,12 @@ public class Algorithms {
 			System.out.print(words[i]);
 			
 			boolean isWord = false;
+			char punc = ' ';
 			if(words[i].charAt(words[i].length()-1) == '.')
+			{
 				isWord = StateMachine.getFSM().verifyWord(words[i].substring(0, words[i].length()-1));
+				punc = words[i].charAt(words[i].length()-1);
+			}
 			else
 				isWord = StateMachine.getFSM().verifyWord(words[i]);
 			
@@ -41,12 +58,27 @@ public class Algorithms {
 					words[i] = ed.getCandidates().get(0);
 				}else
 					{
-						if(i >= 1)
-							words[i] = this.nGramAnalysis(1);
+						if(i >= n)
+						{
+							String pre = "";
+							for(int l = i-1; l > i-n && i > 0; l--)
+							{
+								pre = words[l] + " " +  pre;
+							}
+							//System.out.println("prestring: " + pre);
+							String tmp = "";
+							tmp = this.nGramAnalysis(this.n, text, pre);
+							if(punc != ' ')
+								tmp += punc;
+							if(!tmp.equals(""))
+								words[i] = tmp;
+						}
 					}
+				ed.clearCandidates();
 			}
 			else
 				System.out.println(": IS a word");
+			ed.clearCandidates();
 		}
 		
 		String corrected = "";
@@ -55,11 +87,11 @@ public class Algorithms {
 			corrected += words[i] + " ";
 		}
 		
-		System.out.println(corrected);
+		//System.out.println(corrected);
 		return corrected;
 	}
 	
-	private String nGramAnalysis(int n)
+	public String nGramAnalysis(int n, String text, String pre)
 	{
 		
 		System.out.println("Too many choices! Running N-Gram analysis. . . ");
@@ -67,8 +99,6 @@ public class Algorithms {
 		
 		ArrayList<String> wordList = new ArrayList<String>();
 		ArrayList<Integer> occurences= new ArrayList<Integer>();
-		
-		String text = "tree tea tree tree tea tree tree";
 		
 	
 		int marker = 0, shiftmarker = 0;
@@ -84,17 +114,27 @@ public class Algorithms {
 				//System.out.println("marker" + shiftmarker);
 				if(marker == n)
 				{
+					String tmp[] = text.substring(start, i).split(" ");
 					marker = 0;
-					if(!wordList.contains(text.substring(start, i)))
-					{
-						wordList.add(text.substring(start, i));
-						occurences.add(1);
-					}
-					else
-					{
-						int index = 0;
-						index = wordList.indexOf(text.substring(start,i));
-						occurences.set(index, occurences.get(index) + 1);
+					//System.out.println("tmp: " + text.substring(start, i));
+					if((ed.getCandidates().contains(tmp[n-1])))
+					{	
+						//System.out.println("tmp[n-1]: " + pre + tmp[n-1]);
+						if(text.substring(start, i).equals(pre + tmp[n-1]))
+						{
+							//System.out.println("add");
+							if(!wordList.contains(text.substring(start, i)))
+							{
+								wordList.add(text.substring(start, i));
+								occurences.add(1);
+							}
+							else
+							{
+								int index = 0;
+								index = wordList.indexOf(text.substring(start,i));
+								occurences.set(index, occurences.get(index) + 1);
+							}
+						}
 					}
 					i = shiftmarker + 1;
 					start = i;
@@ -103,19 +143,27 @@ public class Algorithms {
 
 			}
 		}
-		
-		if(!wordList.contains(text.substring(start)))
-		{
-			wordList.add(text.substring(start));
-			occurences.add(1);
+		String tmp[] = text.substring(start).split(" ");
+		//System.out.println("tmp: " + text.substring(start));
+		if((ed.getCandidates().contains(tmp[n-1])))
+		{	
+			//System.out.println("tmp[n-1]: " + tmp[n-1]);
+			if(text.substring(start).equals(pre + tmp[n-1]))
+			{
+				System.out.println("add");
+				if(!wordList.contains(text.substring(start)))
+				{
+					wordList.add(text.substring(start));
+					occurences.add(1);
+				}
+				else
+				{
+					int index = 0;
+					index = wordList.indexOf(text.substring(start));
+					occurences.set(index, occurences.get(index) + 1);
+				}
+			}
 		}
-		else
-		{
-			int index = 0;
-			index = wordList.indexOf(text.substring(start));
-			occurences.set(index, occurences.get(index) + 1);
-		}
-
 		
 		System.out.println();
 		System.out.println(wordList.toString());
@@ -127,6 +175,9 @@ public class Algorithms {
 	
 	private String getWord(ArrayList<String> list, ArrayList<Integer> occurences)
 	{
+		if(list.isEmpty())
+			return "";
+		
 		String word = "";
 		int total = 0;
 		for(int i = 0; i < occurences.size(); i++)
@@ -134,23 +185,28 @@ public class Algorithms {
 		
 		System.out.println("total: " + total);
 		
-		int tmp[] = new int[100];
-		int tmp_percent[] = new int [list.size()];
+		String[] roller = new String[total];
+		int index = 0;
 		for(int i = 0; i < list.size(); i++)
 		{
-			double test = (double)occurences.get(i)/(double)total;
-			System.out.println("value: " + test);
-			
-			int count = (int)Math.round((100 * test));
-			System.out.println("count: " + count);
-			tmp_percent[i] = count;
-			
+			for(int j = 0; j < occurences.get(i); j++)
+			{
+				roller[index] = list.get(i);
+				index++;
+			}
 		}
 		
-		for(int i = 0; i < tmp.length; i++)
-		{
-			
-		}
+		for(int i = 0; i < roller.length; i++)
+			System.out.print("  " + roller[i]);
+		System.out.println();
+		
+		index = (int) (Math.random() * total);
+		System.out.println(index + " -> index");
+		word = roller[index];
+		System.out.println(word);
+		
+		String tmp[] = word.split(" ");
+		word = tmp[tmp.length-1];
 		return word;
 	}
 }

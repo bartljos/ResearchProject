@@ -66,7 +66,7 @@ public class EditDistance {
 			//System.out.println();
 		}
 		
-		System.out.print("\n");
+		//System.out.print("\n");
 		/*for(int i = 0; i < w2.length(); i++)
 		{	
 			System.out.print("  " + w2.charAt(i));
@@ -85,7 +85,7 @@ public class EditDistance {
 		ed = matrix[w1.length()-1][w2.length()-1];
 		
 		//System.out.println(w1 + " ----> " + w2 + " = " + ed + "\n\n");
-		
+		//System.out.println("threshold: " + this.threshold);
 		if (ed == threshold)
 		{
 			this.candidates.add(w2.substring(1));
@@ -96,9 +96,10 @@ public class EditDistance {
 				this.candidates.clear();
 				this.candidates.add(w2.substring(1));
 			}
-		System.out.println("candidates: ");
-		for(int i = 0; i < this.candidates.size(); i++)
-			System.out.println(this.candidates.get(i));
+		//System.out.println("candidates: ");
+		//for(int i = 0; i < this.candidates.size(); i++)
+		//	System.out.println(this.candidates.get(i));
+			
 		return ed;
 	}
 	
@@ -129,6 +130,7 @@ public class EditDistance {
 	public boolean clearCandidates()
 	{
 		this.candidates.clear();
+		this.threshold = 5;
 		if(this.candidates.isEmpty())
 			return true;
 		else

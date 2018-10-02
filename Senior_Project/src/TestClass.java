@@ -13,7 +13,7 @@ public class TestClass {
 	/**
 	 * JUnit test for checking that verifying words with the FSM class works
 	 */
-	/*@Test
+	@Test
 	public void testFSMDictionaryCheck() 
 	{
 		
@@ -52,12 +52,12 @@ public class TestClass {
 		
 	
 		fsm.printTransitionTable();
-	}*/
+	}
 	
 	/**
 	 * JUnit test for testing that the words from the dictionary can be retrieved with the FSM
 	 */
-	/*@Test
+	@Test
 	public void runThroughDictionary()
 	{
 		StateMachine fsm = new StateMachine();
@@ -81,12 +81,12 @@ public class TestClass {
 		ArrayList<String> words = fsm.readDictionary();
 		for(int i = 0; i < words.size(); i++)
 			assertTrue(testWords.contains(words.get(i)));
-	}*/
+	}
 	
 	/**
 	 * JUnit test for the edit distance algorithm (EditDistance class)
 	 */
-	/*@Test
+	@Test
 	public void testEditDistanceAlgorithm()
 	{
 		EditDistance ed = new EditDistance();
@@ -99,26 +99,76 @@ public class TestClass {
 		assertEquals(ed.getEditDistance("dadection", "addiction"), 2);
 		
 		assertEquals(ed.getEditDistance("ha", "hat"), 1);
-	}*/
+	}
 	
 	@Test
-	public void testSentence()
+	public void testNGram()
 	{
 		StateMachine.getFSM();
-		String s = "The cat climbed up a tree tea";
+		String s = "The cat climbed up a tree tea the cat is good the boy likes pizza with mushrooms";
 		
 		String words[] = s.split(" ");
 		for(int i = 0; i < words.length; i++)
 		{
 			StateMachine.getFSM().addWord(words[i]);
-			//System.out.println(StateMachine.getFSM().readDictionary().size());
+			
 		}
-		//StateMachine.getFSM().addWord("climded");
+	
 		StateMachine.getFSM().buildFSM();
 		
 		Algorithms alg = new Algorithms();
-		alg.useEditDistance("The cat climbed up a tee");
+		
+		String[] choices = {"tea", "tree"};
+		double percentage[] = new double[choices.length];
+		int[] count = new int[choices.length];
+		String corrected = "";
+		alg.setText("The cat climbed up a tree The cat climbed up a tea climbed up a tree climbed up a tree climbed up a tree up a tree up a tea");
+		
+		for(int i = 0; i < 10000; i++)
+		{
+			alg.setN(2);
+			corrected = alg.useEditDistance("The cat climbed up a tee.");
+			if(corrected.contains("a tea"))
+				count[0]++;
+			if(corrected.contains("a tree"))
+				count[1]++;
+				
+		}
+		
+		for(int i = 0; i < choices.length; i++)
+		{
+			percentage[i] = (double)count[i]/10000;
+			System.out.println(choices[i] + ": " + percentage[i]);
+		}
+		
+		assertEquals(percentage[0], (double)2/7, 0.01);
+		assertEquals(percentage[1], (double)5/7, 0.01);
+		
 	}
 	
+	@Test
+	public void testSentence()
+	{
+		StateMachine.getFSM();
+		String s = "The cat climbed up a tree tea the cat is good the boy likes pizza with mushrooms";
+		
+		String words[] = s.split(" ");
+		for(int i = 0; i < words.length; i++)
+		{
+			StateMachine.getFSM().addWord(words[i]);
+			
+		}
 	
+		StateMachine.getFSM().buildFSM();
+		
+		Algorithms alg = new Algorithms();
+		
+		String[] choices = {"tea", "tree"};
+		String corrected = "";
+		alg.setText("the boy likes pizza up a tree the cat likes pizza i like pizza like a");
+	
+		alg.setN(3);
+		corrected = alg.useEditDistance("The cat climbed up a tee. the ct is good. the boy likes pza with mushooms.");
+		System.out.println(corrected);
+	}
 }
