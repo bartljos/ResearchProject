@@ -1,5 +1,9 @@
 import static org.junit.Assert.*;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 
 import org.junit.Test;
@@ -146,7 +150,7 @@ public class TestClass {
 		
 	}
 	
-	@Test
+	/*@Test
 	public void testSentence()
 	{
 		StateMachine.getFSM();
@@ -163,12 +167,63 @@ public class TestClass {
 		
 		Algorithms alg = new Algorithms();
 		
-		String[] choices = {"tea", "tree"};
 		String corrected = "";
 		alg.setText("the boy likes pizza up a tree the cat likes pizza i like pizza like a");
 	
 		alg.setN(3);
 		corrected = alg.useEditDistance("The cat climbed up a tee. the ct is good. the boy likes pza with mushooms.");
 		System.out.println(corrected);
+	}*/
+	
+	@Test
+	public void preProcessNGram()
+	{
+		StateMachine.getFSM();
+		String s = "the cat climbed up a tree tea the cat is good the boy likes pizza with mushrooms likes pizza";
+		
+		
+	
+		try {
+			BufferedReader fr = new BufferedReader(new FileReader("susan.txt"));
+			String tmp = "";
+			
+			while((tmp = fr.readLine()) != null)
+			{
+				s += " " + tmp;
+			}
+			fr.close();
+			
+			ArrayList<Character> tmp2 = new ArrayList<Character>();
+			for(int i = 0; i < s.length(); i++)
+			{
+				if(s.charAt(i) != ',' && s.charAt(i) != '.' && s.charAt(i) != '?' && s.charAt(i) != '!' && s.charAt(i) != ';' && s.charAt(i) != '(' && s.charAt(i) != ')' && s.charAt(i) != '"' && s.charAt(i) != '&')
+					tmp2.add(s.charAt(i));
+				
+			}
+			
+			s = "";
+			for(int i = 0; i < tmp2.size(); i++)
+				s += tmp2.get(i);
+		}catch(Exception e) {System.out.println("error reading file"); e.printStackTrace();}
+		
+		String words[] = s.split(" ");
+		for(int i = 0; i < words.length; i++)
+		{
+			//StateMachine.getFSM().addWord(words[i]);
+			
+		}
+		
+		//StateMachine.getFSM().buildFSM();
+		
+		Algorithms alg = new Algorithms();
+		
+		alg.setText(s);
+		for(int i = 1; i <= 3; i++)
+		{	
+			alg.setN(i);
+			alg.createNGram();
+		}
+		
 	}
+	
 }

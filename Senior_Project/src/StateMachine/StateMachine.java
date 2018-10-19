@@ -62,6 +62,8 @@ public class StateMachine {
 	 */
 	public void addWord(String word)
 	{
+		if(word.length() <= 0)
+			return;
 		if(word.charAt(word.length()-1) == '.')
 			word = word.substring(0, word.length()-2);
 		this.dictionary.add(word);

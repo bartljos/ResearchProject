@@ -1,7 +1,13 @@
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import EditDistance.EditDistance;
 import StateMachine.StateMachine;
+import sun.awt.FwDispatcher;
 
 public class Algorithms {
 	
@@ -91,6 +97,43 @@ public class Algorithms {
 		return corrected;
 	}
 	
+	public void createNGram()
+	{
+		
+		SerializableList sl = new SerializableList();
+	
+		int marker = 0, shiftmarker = 0;
+		int start = 0;
+		for(int i = 0; i < text.length(); i++)
+		{
+			if(text.charAt(i) == ' ')
+			{
+				while(i < text.length() && text.charAt(i) == ' ')
+					i++;
+				i--;
+				
+				if(shiftmarker == 0)
+					shiftmarker = i;
+				
+				marker++;
+			
+				if(marker == n)
+				{
+					marker = 0;
+					
+					sl.addWord(text.substring(start, i));
+						
+					i = shiftmarker + 1;
+					start = i;
+					shiftmarker = 0;
+				}
+
+			}
+		}
+		sl.printAll();
+	
+	}
+	
 	public String nGramAnalysis(int n, String text, String pre)
 	{
 		
@@ -116,10 +159,10 @@ public class Algorithms {
 				{
 					String tmp[] = text.substring(start, i).split(" ");
 					marker = 0;
-					//System.out.println("tmp: " + text.substring(start, i));
+					System.out.println("tmp: " + text.substring(start, i));
 					if((ed.getCandidates().contains(tmp[n-1])))
 					{	
-						//System.out.println("tmp[n-1]: " + pre + tmp[n-1]);
+						System.out.println("tmp[n-1]: " + pre + tmp[n-1]);
 						if(text.substring(start, i).equals(pre + tmp[n-1]))
 						{
 							//System.out.println("add");
