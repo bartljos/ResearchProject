@@ -37,11 +37,13 @@ public class StateMachine {
 	{
 		BufferedReader fr = null;
 		try {
-			fr = new BufferedReader(new FileReader("C:\\Users\\Josh\\Desktop\\SrRsrch Resources\\Dictionary\\en-US.dic"));
+			fr = new BufferedReader(new FileReader("C:\\Users\\Josh\\Desktop\\SrRsrch Resources\\Dictionary Info\\dictionary.txt"));
 			String word = "";
 			while((word = fr.readLine()) != null)
 			{
-					dictionary.add(word);
+					word = parseDictionary(word);
+					if(!word.equals(""))
+						dictionary.add(word);
 			}
 			fr.close();
 		} catch (Exception e) {
@@ -54,6 +56,23 @@ public class StateMachine {
 			System.out.println(i + " " + this.transList.get(i).toString());
 		}
 		return true;
+	}
+	
+	public String parseDictionary(String word)
+	{
+				if(word.equals(""))
+					return "";
+		String[] tmp;
+				
+				if(word.charAt(0) >= 'A' && word.charAt(0) <= 'Z')
+				{
+					tmp = word.split(" ");
+				}else
+					return "";
+				
+		System.out.println("word to add: " + tmp[0]);
+		return tmp[0];
+		
 	}
 	
 	/**

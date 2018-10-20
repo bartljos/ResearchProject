@@ -1,6 +1,11 @@
+import java.io.BufferedReader;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -13,7 +18,78 @@ public class Algorithms {
 	
 	EditDistance ed = null;
 	private String text = "";
-	private int n = 1;
+	private int n = 1; private int splitPoint = 0;
+	
+	public void setSplit(int line)
+	{
+		splitPoint = line;
+	}
+	
+	public String[] setFileAsSource(String filepath)
+	{
+		boolean split = false; int line = 0;
+		try {
+			BufferedReader fr = new BufferedReader(new FileReader(filepath));
+			String tmp = ""; String s = ""; String s2 = "";
+			
+			while((tmp = fr.readLine()) != null)
+			{
+				if(tmp.equals(""))
+				{
+					if(split)
+					{
+						split = false;
+						line = 0;
+					}else
+					{
+						line++;
+					}
+					
+					if(line == splitPoint)
+						split = true;
+					
+				}
+				
+				if(split == false)
+					s += " " + tmp + "\n";
+				else
+					s2 += " " + tmp +"\n";
+			}
+			fr.close();
+			
+			ArrayList<Character> tmp2 = new ArrayList<Character>();
+			for(int i = 0; i < s.length(); i++)
+			{
+				if(s.charAt(i) != ',' && s.charAt(i) != '.' && s.charAt(i) != '?' && s.charAt(i) != '!' && s.charAt(i) != ';' && s.charAt(i) != '(' && s.charAt(i) != ')' && s.charAt(i) != '"' && s.charAt(i) != '&')
+					tmp2.add(s.charAt(i));
+				
+			}
+			
+			s = "";
+			for(int i = 0; i < tmp2.size(); i++)
+				s += tmp2.get(i);
+			
+			
+			
+			tmp2 = new ArrayList<Character>();
+			for(int i = 0; i < s2.length(); i++)
+			{
+				if(s2.charAt(i) != ',' && s2.charAt(i) != '.' && s2.charAt(i) != '?' && s2.charAt(i) != '!' && s2.charAt(i) != ';' && s2.charAt(i) != '(' && s2.charAt(i) != ')' && s2.charAt(i) != '"' && s2.charAt(i) != '&')
+					tmp2.add(s2.charAt(i));
+				
+			}
+			
+			s2 = "";
+			for(int i = 0; i < tmp2.size(); i++)
+				s2 += tmp2.get(i);
+			
+			this.setText(s);
+			return new String[]{s, s2};
+			
+		}catch(Exception e) {System.out.println("error reading file"); e.printStackTrace();}
+		
+		return null;
+	}
 	
 	public void setText(String text)
 	{
@@ -73,7 +149,7 @@ public class Algorithms {
 							}
 							//System.out.println("prestring: " + pre);
 							String tmp = "";
-							tmp = this.nGramAnalysis(this.n, text, pre);
+							//tmp = this.nGramAnalysis(this.n, text, pre);
 							if(punc != ' ')
 								tmp += punc;
 							if(!tmp.equals(""))
@@ -97,10 +173,20 @@ public class Algorithms {
 		return corrected;
 	}
 	
-	public void createNGram()
+	public SerializableList createNGram()
 	{
 		
-		SerializableList sl = new SerializableList();
+		SerializableList sl = null;
+		try {
+			FileInputStream f = new FileInputStream("n=" + n);
+			ObjectInputStream o = new ObjectInputStream(f);
+			sl = (SerializableList)o.readObject();
+			o.close();
+			return sl;
+		}catch(Exception e) {}
+		
+		
+		sl = new SerializableList();
 	
 		int marker = 0, shiftmarker = 0;
 		int start = 0;
@@ -121,7 +207,7 @@ public class Algorithms {
 				{
 					marker = 0;
 					
-					sl.addWord(text.substring(start, i));
+					sl.addWord(text.substring(start, i).replace("\n", "").trim());
 						
 					i = shiftmarker + 1;
 					start = i;
@@ -130,11 +216,19 @@ public class Algorithms {
 
 			}
 		}
+		
+		try {
+			FileOutputStream f = new FileOutputStream("n=" + n);
+			ObjectOutputStream o = new ObjectOutputStream(f);
+			o.writeObject(sl);
+			o.close();
+		}catch(Exception e) {}
+		
 		sl.printAll();
-	
+		return sl;
 	}
 	
-	public String nGramAnalysis(int n, String text, String pre)
+	/*public String nGramAnalysis(int n, String text, String pre)
 	{
 		
 		System.out.println("Too many choices! Running N-Gram analysis. . . ");
@@ -215,6 +309,7 @@ public class Algorithms {
 		return this.getWord(wordList, occurences);
 		
 	}
+	*/
 	
 	private String getWord(ArrayList<String> list, ArrayList<Integer> occurences)
 	{

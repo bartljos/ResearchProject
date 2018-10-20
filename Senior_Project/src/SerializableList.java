@@ -14,7 +14,11 @@ public class SerializableList implements Serializable{
 	{
 		int result = Collections.binarySearch(wordList, w);
 		
-		
+		if(w.length() > 1)
+		{
+			if(w.charAt(w.length()-1) == '\n')
+				w = w.substring(0, w.length()-2);
+		}
 		
 		if(result < 0)
 		{

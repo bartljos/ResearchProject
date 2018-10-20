@@ -3,6 +3,8 @@ import static org.junit.Assert.*;
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 
@@ -175,7 +177,35 @@ public class TestClass {
 		System.out.println(corrected);
 	}*/
 	
+	
 	@Test
+	public void testDictionary() throws IOException
+	{
+		StateMachine m = new StateMachine();
+		m.readDictionaryFile();
+		m.buildFSM();
+		System.out.println("\nFSM built");
+		
+		Algorithms alg = new Algorithms();
+		alg.setN(1);
+		alg.setSplit(10);
+		String test[] = alg.setFileAsSource("susan.txt");
+		System.out.println("n and text set for analysis");
+		System.out.println(m.readDictionary());
+		alg.createNGram().printAll();
+		
+		
+		
+		FileWriter w = new FileWriter("test1");
+		w.write(test[0]);
+		w.close();
+		
+		w = new FileWriter("test2");
+		w.write(test[1]);
+		w.close();
+	}
+	
+	/*@Test
 	public void preProcessNGram()
 	{
 		StateMachine.getFSM();
@@ -183,28 +213,7 @@ public class TestClass {
 		
 		
 	
-		try {
-			BufferedReader fr = new BufferedReader(new FileReader("susan.txt"));
-			String tmp = "";
-			
-			while((tmp = fr.readLine()) != null)
-			{
-				s += " " + tmp;
-			}
-			fr.close();
-			
-			ArrayList<Character> tmp2 = new ArrayList<Character>();
-			for(int i = 0; i < s.length(); i++)
-			{
-				if(s.charAt(i) != ',' && s.charAt(i) != '.' && s.charAt(i) != '?' && s.charAt(i) != '!' && s.charAt(i) != ';' && s.charAt(i) != '(' && s.charAt(i) != ')' && s.charAt(i) != '"' && s.charAt(i) != '&')
-					tmp2.add(s.charAt(i));
-				
-			}
-			
-			s = "";
-			for(int i = 0; i < tmp2.size(); i++)
-				s += tmp2.get(i);
-		}catch(Exception e) {System.out.println("error reading file"); e.printStackTrace();}
+		
 		
 		String words[] = s.split(" ");
 		for(int i = 0; i < words.length; i++)
@@ -224,6 +233,6 @@ public class TestClass {
 			alg.createNGram();
 		}
 		
-	}
+	}*/
 	
 }
