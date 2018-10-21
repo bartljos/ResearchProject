@@ -62,16 +62,21 @@ public class StateMachine {
 	{
 				if(word.equals(""))
 					return "";
-		String[] tmp;
+		String tmp = "";
 				
 				if(word.charAt(0) >= 'A' && word.charAt(0) <= 'Z')
 				{
-					tmp = word.split(" ");
+					for(int i = 0; i < word.length() && word.charAt(i) != ' ' && word.charAt(i) != '\t'; i++)
+					{
+						tmp += word.charAt(i);
+					}
+					
+					
 				}else
 					return "";
 				
-		System.out.println("word to add: " + tmp[0]);
-		return tmp[0];
+		System.out.println("word to add: " + tmp);
+		return tmp;
 		
 	}
 	

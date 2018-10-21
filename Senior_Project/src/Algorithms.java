@@ -18,7 +18,41 @@ public class Algorithms {
 	
 	EditDistance ed = null;
 	private String text = "";
-	private int n = 1; private int splitPoint = 0;
+	private int n = -1; private int splitPoint = 0;
+	private ArrayList<String> filePaths = new ArrayList<String>();
+	private ArrayList<SerializableList> lists = new ArrayList<SerializableList>();
+	
+	public String[] runFiles()
+	{
+		String[] finalSet = {" ", " "};
+		String[] tmp = {" ", " "};
+		for(int i = 0; i < filePaths.size(); i++)
+		{
+			System.out.println("now working on: " + filePaths.get(i));
+			tmp = this.setFileAsSource(filePaths.get(i));
+			finalSet[0] += tmp[0] + '\n';
+			finalSet[1] += tmp[1] +'\n';
+			
+			this.setText(tmp[0]);
+			this.createNGram();
+		}
+		return finalSet;
+	}	
+	
+	public void createList(int n)
+	{
+		if(lists.size() <= n)
+			for(int i  = 0; i < n; i++)
+				lists.add(new SerializableList());
+		else
+			lists.set(n-1, new SerializableList());
+	}
+	
+	
+	public SerializableList getList(int n)
+	{
+		return lists.get(n-1);
+	}
 	
 	public void setSplit(int line)
 	{
@@ -51,9 +85,9 @@ public class Algorithms {
 				}
 				
 				if(split == false)
-					s += " " + tmp + "\n";
+					s += " " + tmp + "";
 				else
-					s2 += " " + tmp +"\n";
+					s2 += " " + tmp +"";
 			}
 			fr.close();
 			
@@ -83,7 +117,7 @@ public class Algorithms {
 			for(int i = 0; i < tmp2.size(); i++)
 				s2 += tmp2.get(i);
 			
-			this.setText(s);
+			
 			return new String[]{s, s2};
 			
 		}catch(Exception e) {System.out.println("error reading file"); e.printStackTrace();}
@@ -173,33 +207,37 @@ public class Algorithms {
 		return corrected;
 	}
 	
-	public SerializableList createNGram()
+	public void createNGram()
 	{
-		
-		SerializableList sl = null;
-		try {
+		/*try {
 			FileInputStream f = new FileInputStream("n=" + n);
 			ObjectInputStream o = new ObjectInputStream(f);
 			sl = (SerializableList)o.readObject();
 			o.close();
 			return sl;
-		}catch(Exception e) {}
+		}catch(Exception e) {}*/
 		
-		
-		sl = new SerializableList();
 	
+		int i = 0;
+		while(text.charAt(i) == ' ')
+			i++;
+		
+		
 		int marker = 0, shiftmarker = 0;
-		int start = 0;
-		for(int i = 0; i < text.length(); i++)
+		int start = i;
+		for(; i < text.length(); i++)
 		{
+			
+			
 			if(text.charAt(i) == ' ')
 			{
+				
 				while(i < text.length() && text.charAt(i) == ' ')
 					i++;
 				i--;
 				
 				if(shiftmarker == 0)
-					shiftmarker = i;
+ 					shiftmarker = i;
 				
 				marker++;
 			
@@ -207,7 +245,9 @@ public class Algorithms {
 				{
 					marker = 0;
 					
-					sl.addWord(text.substring(start, i).replace("\n", "").trim());
+					String tmp = text.substring(start, i).replace("\n", "");
+					System.out.println(" ---> " + tmp);
+					lists.get(n-1).addWord(tmp);
 						
 					i = shiftmarker + 1;
 					start = i;
@@ -220,97 +260,14 @@ public class Algorithms {
 		try {
 			FileOutputStream f = new FileOutputStream("n=" + n);
 			ObjectOutputStream o = new ObjectOutputStream(f);
-			o.writeObject(sl);
+			//o.writeObject(sl);
 			o.close();
 		}catch(Exception e) {}
 		
-		sl.printAll();
-		return sl;
+		//sl.printAll();
 	}
-	
-	/*public String nGramAnalysis(int n, String text, String pre)
-	{
-		
-		System.out.println("Too many choices! Running N-Gram analysis. . . ");
-		
-		
-		ArrayList<String> wordList = new ArrayList<String>();
-		ArrayList<Integer> occurences= new ArrayList<Integer>();
-		
-	
-		int marker = 0, shiftmarker = 0;
-		int start = 0;
-		for(int i = 0; i < text.length(); i++)
-		{
-			if(text.charAt(i) == ' ')
-			{
-				if(shiftmarker == 0)
-					shiftmarker = i;
-				
-				marker++;
-				//System.out.println("marker" + shiftmarker);
-				if(marker == n)
-				{
-					String tmp[] = text.substring(start, i).split(" ");
-					marker = 0;
-					System.out.println("tmp: " + text.substring(start, i));
-					if((ed.getCandidates().contains(tmp[n-1])))
-					{	
-						System.out.println("tmp[n-1]: " + pre + tmp[n-1]);
-						if(text.substring(start, i).equals(pre + tmp[n-1]))
-						{
-							//System.out.println("add");
-							if(!wordList.contains(text.substring(start, i)))
-							{
-								wordList.add(text.substring(start, i));
-								occurences.add(1);
-							}
-							else
-							{
-								int index = 0;
-								index = wordList.indexOf(text.substring(start,i));
-								occurences.set(index, occurences.get(index) + 1);
-							}
-						}
-					}
-					i = shiftmarker + 1;
-					start = i;
-					shiftmarker = 0;
-				}
 
-			}
-		}
-		String tmp[] = text.substring(start).split(" ");
-		//System.out.println("tmp: " + text.substring(start));
-		if((ed.getCandidates().contains(tmp[n-1])))
-		{	
-			//System.out.println("tmp[n-1]: " + tmp[n-1]);
-			if(text.substring(start).equals(pre + tmp[n-1]))
-			{
-				System.out.println("add");
-				if(!wordList.contains(text.substring(start)))
-				{
-					wordList.add(text.substring(start));
-					occurences.add(1);
-				}
-				else
-				{
-					int index = 0;
-					index = wordList.indexOf(text.substring(start));
-					occurences.set(index, occurences.get(index) + 1);
-				}
-			}
-		}
-		
-		System.out.println();
-		System.out.println(wordList.toString());
-		System.out.println(occurences.toString());
-		
-		return this.getWord(wordList, occurences);
-		
-	}
-	*/
-	
+
 	private String getWord(ArrayList<String> list, ArrayList<Integer> occurences)
 	{
 		if(list.isEmpty())
@@ -346,5 +303,12 @@ public class Algorithms {
 		String tmp[] = word.split(" ");
 		word = tmp[tmp.length-1];
 		return word;
+	}
+	
+	public int addFilePath(String path)
+	{
+		if(!filePaths.contains(path))
+			filePaths.add(path);
+		return filePaths.indexOf(path);
 	}
 }

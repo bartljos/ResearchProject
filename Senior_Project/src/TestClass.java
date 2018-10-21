@@ -187,12 +187,25 @@ public class TestClass {
 		System.out.println("\nFSM built");
 		
 		Algorithms alg = new Algorithms();
-		alg.setN(1);
+		
+		alg.createList(2);
+		alg.setN(2);
 		alg.setSplit(10);
-		String test[] = alg.setFileAsSource("susan.txt");
+		alg.addFilePath("susan.txt");
+		alg.addFilePath("professor.txt");
+		alg.addFilePath("moonstone.txt");
+		
+		System.out.println("create files");
+		String test[] = alg.runFiles();
+		
+		
 		System.out.println("n and text set for analysis");
-		System.out.println(m.readDictionary());
-		alg.createNGram().printAll();
+		//System.out.println(m.readDictionary() + " ---> " + m.readDictionary().size());
+		
+		
+	
+		//System.out.println("create N =" + 2);
+		
 		
 		
 		
@@ -203,8 +216,12 @@ public class TestClass {
 		w = new FileWriter("test2");
 		w.write(test[1]);
 		w.close();
-	}
+		
+		alg.getList(2).printAll();
 	
+	}
+
+
 	/*@Test
 	public void preProcessNGram()
 	{

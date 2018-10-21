@@ -14,6 +14,7 @@ public class SerializableList implements Serializable{
 	{
 		int result = Collections.binarySearch(wordList, w);
 		
+		w.toLowerCase();
 		if(w.length() > 1)
 		{
 			if(w.charAt(w.length()-1) == '\n')
@@ -37,8 +38,19 @@ public class SerializableList implements Serializable{
 	
 	public void printAll()
 	{
-		System.out.println(wordList.toString() + " ---> "	+ wordList.size());
-		System.out.println(occurences.toString() + " ---> "	+ occurences.size());
+		//System.out.println(wordList.toString() + " ---> "	+ wordList.size());
+		//System.out.println(occurences.toString() + " ---> "	+ occurences.size());
+		
+		for(int i = 0; i < wordList.size(); i++)
+		{
+			try {
+				Thread.sleep(500);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			System.out.println(" " + wordList.get(i) +  " --->  " + occurences.get(i));
+		}
 	}
 	
 
