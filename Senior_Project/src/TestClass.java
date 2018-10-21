@@ -183,13 +183,14 @@ public class TestClass {
 	{
 		StateMachine m = new StateMachine();
 		m.readDictionaryFile();
-		m.buildFSM();
+		//m.buildFSM();
 		System.out.println("\nFSM built");
 		
 		Algorithms alg = new Algorithms();
 		
-		alg.createList(2);
-		alg.setN(2);
+		int n = 1;
+		alg.createList(n);
+		alg.setN(n);
 		alg.setSplit(10);
 		alg.addFilePath("susan.txt");
 		alg.addFilePath("professor.txt");
@@ -217,7 +218,7 @@ public class TestClass {
 		w.write(test[1]);
 		w.close();
 		
-		alg.getList(2).printAll();
+		alg.getList(n).printAll(0);
 	
 	}
 

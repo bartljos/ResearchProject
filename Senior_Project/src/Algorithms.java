@@ -29,11 +29,14 @@ public class Algorithms {
 		for(int i = 0; i < filePaths.size(); i++)
 		{
 			System.out.println("now working on: " + filePaths.get(i));
+			System.out.println("parsing file");
 			tmp = this.setFileAsSource(filePaths.get(i));
 			finalSet[0] += tmp[0] + '\n';
 			finalSet[1] += tmp[1] +'\n';
 			
+			
 			this.setText(tmp[0]);
+			System.out.println("creating n gram");
 			this.createNGram();
 		}
 		return finalSet;
@@ -68,6 +71,7 @@ public class Algorithms {
 			
 			while((tmp = fr.readLine()) != null)
 			{
+				//System.out.println(tmp);
 				if(tmp.equals(""))
 				{
 					if(split)
@@ -91,31 +95,12 @@ public class Algorithms {
 			}
 			fr.close();
 			
-			ArrayList<Character> tmp2 = new ArrayList<Character>();
-			for(int i = 0; i < s.length(); i++)
-			{
-				if(s.charAt(i) != ',' && s.charAt(i) != '.' && s.charAt(i) != '?' && s.charAt(i) != '!' && s.charAt(i) != ';' && s.charAt(i) != '(' && s.charAt(i) != ')' && s.charAt(i) != '"' && s.charAt(i) != '&')
-					tmp2.add(s.charAt(i));
-				
-			}
+			System.out.println("fix s");
+			s = s.replaceAll("\\.", "").replaceAll("\\?", "").replaceAll("!", "").replaceAll("\\;", "").replaceAll("\\(", "").replaceAll("\\)", "").replaceAll("[\"'\u2018\u2019\u201c\u201d]", "").replaceAll(",", "").replaceAll("\\*", "");
 			
-			s = "";
-			for(int i = 0; i < tmp2.size(); i++)
-				s += tmp2.get(i);
+			System.out.println("fix s2");
+			s2 = s2.replaceAll("\\.", "").replaceAll("\\?", "").replaceAll("!", "").replaceAll("\\;", "").replaceAll("\\(", "").replaceAll("\\)", "").replaceAll("[\"'\u2018\u2019\u201c\u201d]", "").replaceAll(",", "").replaceAll("\\*", "");
 			
-			
-			
-			tmp2 = new ArrayList<Character>();
-			for(int i = 0; i < s2.length(); i++)
-			{
-				if(s2.charAt(i) != ',' && s2.charAt(i) != '.' && s2.charAt(i) != '?' && s2.charAt(i) != '!' && s2.charAt(i) != ';' && s2.charAt(i) != '(' && s2.charAt(i) != ')' && s2.charAt(i) != '"' && s2.charAt(i) != '&')
-					tmp2.add(s2.charAt(i));
-				
-			}
-			
-			s2 = "";
-			for(int i = 0; i < tmp2.size(); i++)
-				s2 += tmp2.get(i);
 			
 			
 			return new String[]{s, s2};
