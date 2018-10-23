@@ -2,6 +2,9 @@ import static org.junit.Assert.*;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -181,6 +184,8 @@ public class TestClass {
 	@Test
 	public void testDictionary() throws IOException
 	{
+		String[] fileList = getFileSystem();
+		
 		StateMachine m = new StateMachine();
 		m.readDictionaryFile();
 		//m.buildFSM();
@@ -192,9 +197,12 @@ public class TestClass {
 		alg.createList(n);
 		alg.setN(n);
 		alg.setSplit(10);
-		alg.addFilePath("susan.txt");
-		alg.addFilePath("professor.txt");
-		alg.addFilePath("moonstone.txt");
+		
+		for(int i = 0; i < fileList.length; i++)
+		{
+			System.out.println(fileList[i]);
+			alg.addFilePath(fileList[i]);
+		}
 		
 		System.out.println("create files");
 		String test[] = alg.runFiles();
@@ -218,10 +226,37 @@ public class TestClass {
 		w.write(test[1]);
 		w.close();
 		
-		alg.getList(n).printAll(0);
+		alg.getList(n).printAll(50);
 	
 	}
 
+	
+	public String[] getFileSystem() throws IOException
+	{
+		ArrayList<String> tmp = new ArrayList<String>();
+		File fs = new File("310 corpus");
+		System.out.println("is dir: " + fs.isDirectory());
+		
+		String[] files = fs.list();
+		
+		for(int i = 0; i < files.length; i++)
+		{
+			fs = new File("310 corpus/" + files[i]);
+			System.out.println(fs.isDirectory());
+			String[] leaves = fs.list();
+			
+			for(int j = 0; j < leaves.length; j++)
+			{
+				System.out.println("file: " + leaves[j]);
+				tmp.add("310 corpus/" + files[i] + "/" + leaves[j]);
+			}
+		}
+		
+		String[] tmp2 = new String[tmp.size()];
+		tmp.toArray(tmp2);
+		return tmp2;
+		
+	}
 
 	/*@Test
 	public void preProcessNGram()

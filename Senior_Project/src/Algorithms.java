@@ -89,17 +89,17 @@ public class Algorithms {
 				}
 				
 				if(split == false)
-					s += " " + tmp + "";
+					s += " " + tmp + "\n";
 				else
-					s2 += " " + tmp +"";
+					s2 += " " + tmp +"\n";
 			}
 			fr.close();
 			
-			System.out.println("fix s");
-			s = s.replaceAll("\\.", "").replaceAll("\\?", "").replaceAll("!", "").replaceAll("\\;", "").replaceAll("\\(", "").replaceAll("\\)", "").replaceAll("[\"'\u2018\u2019\u201c\u201d]", "").replaceAll(",", "").replaceAll("\\*", "");
+			//System.out.println("fix s");
+			//s = s.replaceAll("\\.", "").replaceAll("\\?", "").replaceAll("!", "").replaceAll("\\;", "").replaceAll("\\(", "").replaceAll("\\)", "").replaceAll("[\"'\u2018\u2019\u201c\u201d]", "").replaceAll(",", "").replaceAll("\\*", "");
 			
-			System.out.println("fix s2");
-			s2 = s2.replaceAll("\\.", "").replaceAll("\\?", "").replaceAll("!", "").replaceAll("\\;", "").replaceAll("\\(", "").replaceAll("\\)", "").replaceAll("[\"'\u2018\u2019\u201c\u201d]", "").replaceAll(",", "").replaceAll("\\*", "");
+			//System.out.println("fix s2");
+			//s2 = s2.replaceAll("\\.", "").replaceAll("\\?", "").replaceAll("!", "").replaceAll("\\;", "").replaceAll("\\(", "").replaceAll("\\)", "").replaceAll("[\"'\u2018\u2019\u201c\u201d]", "").replaceAll(",", "").replaceAll("\\*", "");
 			
 			
 			
@@ -113,6 +113,11 @@ public class Algorithms {
 	public void setText(String text)
 	{
 		this.text = text;
+		this.text = text.replaceAll("\n", "").replaceAll("\\.", "").replaceAll("\\?", "").replaceAll("!", "");
+		this.text = this.text.replaceAll("\\;", "").replaceAll("\\(", "").replaceAll("\\)", "").replaceAll("[\u2018\u2019\u201c\u201d]", "");
+		this.text = this.text.replaceAll(",", "").replaceAll("\\*", "").replaceAll("  ", " ").replaceAll("\\[", "");
+		this.text = this.text.replaceAll("]", "").replaceAll("_", "").replaceAll(",", "").replaceAll("\"", "").replaceAll(" '",  " ");
+	
 	}
 	
 	public void setN(int n)
@@ -231,7 +236,7 @@ public class Algorithms {
 					marker = 0;
 					
 					String tmp = text.substring(start, i).replace("\n", "");
-					System.out.println(" ---> " + tmp);
+					//System.out.println(" ---> " + tmp);
 					lists.get(n-1).addWord(tmp);
 						
 					i = shiftmarker + 1;
