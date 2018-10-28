@@ -213,7 +213,7 @@ public class TestClass {
 		
 		Algorithms alg = new Algorithms();
 		
-		int n = 3;
+		int n = 2;
 		alg.createList(n);
 		alg.setN(n);
 		alg.setSplit(10);

@@ -420,7 +420,7 @@ public class Algorithms {
 			split_document = document.split(" ");
 			String nPhrase = "";
 			
-			
+			// change 25 to split_document.length for final tests
 			for(int i = 0; i < 25; i++)
 			{	
 				int length = 0; 
