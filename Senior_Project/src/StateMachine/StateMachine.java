@@ -2,6 +2,7 @@ package StateMachine;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.util.ArrayList;
+import java.util.Collections;
 
 /**
  * @author Joshua Bartle
@@ -42,19 +43,19 @@ public class StateMachine {
 			while((word = fr.readLine()) != null)
 			{
 					word = parseDictionary(word);
+					
 					if(!word.equals(""))
-						dictionary.add(word);
+					{
+						System.out.println("word to add: " + word);
+						fsm.addWord(word);
+					}
 			}
 			fr.close();
 		} catch (Exception e) {
 			e.printStackTrace();
 			return false;
 		}
-		
-		for(int i = 0; i < this.transList.size(); i++)
-		{
-			System.out.println(i + " " + this.transList.get(i).toString());
-		}
+	
 		return true;
 	}
 	
@@ -62,7 +63,7 @@ public class StateMachine {
 	{
 				if(word.equals(""))
 					return "";
-		String tmp = "";
+				String tmp = "";
 				
 				if(word.charAt(0) >= 'A' && word.charAt(0) <= 'Z')
 				{
@@ -75,8 +76,8 @@ public class StateMachine {
 				}else
 					return "";
 				
-		System.out.println("word to add: " + tmp);
-		return tmp;
+		
+		return tmp.toLowerCase();
 		
 	}
 	
@@ -88,9 +89,9 @@ public class StateMachine {
 	{
 		if(word.length() <= 0)
 			return;
-		if(word.charAt(word.length()-1) == '.')
-			word = word.substring(0, word.length()-2);
-		this.dictionary.add(word);
+	
+		if(Collections.binarySearch(fsm.dictionary, word) < 0)
+			fsm.dictionary.add(word);
 		//System.out.println("dic: " + StateMachine.getFSM().dictionary.size());
 	}
 	
@@ -102,7 +103,7 @@ public class StateMachine {
 	 */
 	public boolean buildFSM()
 	{
-		if(this.dictionary.size() <= 0)
+		if(fsm.dictionary.size() <= 0)
 		{
 			System.out.println("no words");
 			return false;
@@ -110,9 +111,9 @@ public class StateMachine {
 		
 		this.buildCharacterList();
 		
-		for(int i = 0; i < this.dictionary.size(); i++)
+		for(int i = 0; i < fsm.dictionary.size(); i++)
 		{
-			this.buildState(this.dictionary.get(i));
+			fsm.buildState(fsm.dictionary.get(i));
 		}
 		
 		return true;
@@ -124,13 +125,13 @@ public class StateMachine {
 	 */
 	private void buildCharacterList()
 	{
-		for(int i = 0; i < this.dictionary.size(); i++)
+		for(int i = 0; i < fsm.dictionary.size(); i++)
 		{
-			for(int j = 0; j < this.dictionary.get(i).length(); j++)
+			for(int j = 0; j < fsm.dictionary.get(i).length(); j++)
 			{
-				if(!this.transChars.contains(this.dictionary.get(i).charAt(j))) // if the character is not in the list already
+				if(!fsm.transChars.contains(fsm.dictionary.get(i).charAt(j))) // if the character is not in the list already
 				{
-					this.transChars.add(this.dictionary.get(i).charAt(j));
+					fsm.transChars.add(fsm.dictionary.get(i).charAt(j));
 				}
 			}
 		}
@@ -146,42 +147,46 @@ public class StateMachine {
 		int currentState = 0;
 		int lastState = 0;
 		
-		if(this.transList.size() <= 0) // if there are no states, add one
-			this.createNewState(0);
+		//System.out.println("word " + word);
+		if(fsm.transList.size() <= 0) // if there are no states, add one
+			fsm.createNewState(0);
 		
 		// start processing word
 		for(int i = 0; i < word.length(); i++) // for the length of the word
 		{
-			for(int j = 0; j < this.transChars.size(); j++) // For all of the characters in the transition table
+			for(int j = 0; j < fsm.transChars.size(); j++) // For all of the characters in the transition table
 				if(word.charAt(i) == this.transChars.get(j)) // if the character (j) is equal to the character  (i) in the word 
 				{
 					int statelist[] = new int[2]; // array to store the current state and the previous state
 					statelist[1] = lastState;
 					lastState = currentState;
-					
-					if(this.transList.get(currentState).get(j)[0] == -1) // if the state is unused or not set set that state
+					//System.out.println(fsm.transChars.get(j));
+					//System.out.println("tlist: " + fsm.transChars.toString());
+					//System.out.println(word.charAt(i));
+					if(fsm.transList.get(currentState).get(j)[0] == -1) // if the state is unused or not set set that state
 					{
-						currentState = this.transList.size();
+						currentState = fsm.transList.size();
 						this.createNewState(currentState);
 					
 					}else // the state is already initialized (shared by another word) so just follow that path and use that state
-						currentState = this.transList.get(currentState).get(j)[0];
+						currentState = fsm.transList.get(currentState).get(j)[0];
 	
 
 					statelist[0] = currentState;
-					this.transList.get(lastState).set(j, statelist); // set the value in the transition table for the current state
+					fsm.transList.get(lastState).set(j, statelist); // set the value in the transition table for the current state
+					//System.out.println("done");
 				}
 		}
 		
 		int i = 0;
-		while(word.charAt(word.length()-1) != this.transChars.get(i))
+		while(word.charAt(word.length()-1) != fsm.transChars.get(i))
 		{
 			i++;
 		}
-		this.transList.get(currentState).get(i)[1] = lastState;
+		fsm.transList.get(currentState).get(i)[1] = lastState;
 			
-		if(!this.acceptingStates.contains(currentState))
-			this.acceptingStates.add(currentState);
+		if(!fsm.acceptingStates.contains(currentState))
+			fsm.acceptingStates.add(currentState);
 		//end processing word
 		
 	}	
@@ -193,30 +198,31 @@ public class StateMachine {
 	 */
 	public boolean verifyWord(String word)
 	{
+		word = word.replaceAll("\\;|\\,|\\.|\\!|\\?|\"|\\:", "").toLowerCase();
 		
 		int currentState = 0; // start at the start state
 		for(int i = 0; i < word.length(); i++)
 		{
-			for(int j = 0; j < this.transChars.size(); j++)
+			for(int j = 0; j < fsm.transChars.size(); j++)
 			{	
-				if(!this.transChars.contains(word.charAt(i))) // if the character is not in the transition table, return false
+				if(!fsm.transChars.contains(word.charAt(i))) // if the character is not in the transition table, return false
 					return false;
-				if(word.charAt(i) == this.transChars.get(j)) // if the character (i) in the word is equal to the jth character in the table
+				if(word.charAt(i) == fsm.transChars.get(j)) // if the character (i) in the word is equal to the jth character in the table
 				{
-					if(this.transList.get(currentState).get(j)[0] == -1) // if the state has no transition, return false
+					if(fsm.transList.get(currentState).get(j)[0] == -1) // if the state has no transition, return false
 					{
 						return false;
 					}else // else, set the current state to the state associated with the transition
 					{
 				
-						currentState = this.transList.get(currentState).get(j)[0];
+						currentState = fsm.transList.get(currentState).get(j)[0];
 					}
 				}
 			}
 		}
 
 		// if the word has been processed and the transition ends on an accepting state, return true (is a word)
-		if(this.acceptingStates.contains(currentState))
+		if(fsm.acceptingStates.contains(currentState))
 		{
 			return true;
 		}
@@ -231,7 +237,7 @@ public class StateMachine {
 	private void fillTransitionList(int index)
 	{
 		for(int i = 0; i < this.transChars.size(); i++)
-			this.transList.get(index).add(new int[] {-1, -1});
+			fsm.transList.get(index).add(new int[] {-1, -1});
 	}
 	
 	/**
@@ -241,22 +247,22 @@ public class StateMachine {
 	private void createNewState(int index)
 	{
 
-		this.transList.add(new ArrayList<int[]>()); // add a new state to the transition table
-		this.fillTransitionList(this.transList.size()-1); // initialize the state
-		this.numStates++;
+		fsm.transList.add(new ArrayList<int[]>()); // add a new state to the transition table
+		fsm.fillTransitionList(fsm.transList.size()-1); // initialize the state
+		fsm.numStates++;
 		
 	}
 	
 	public void printTransitionTable()
 	{
-		for(int i = 0; i < this.transChars.size(); i++)
-			System.out.print("    " + this.transChars.get(i) + "   ");
+		for(int i = 0; i < fsm.transChars.size(); i++)
+			System.out.print("    " + fsm.transChars.get(i) + "   ");
 		System.out.println();
 		
-		for(int i = 0; i < this.transList.size(); i++)
+		for(int i = 0; i < fsm.transList.size(); i++)
 		{
-			for(int j = 0; j < this.transList.get(i).size(); j++)
-				System.out.print(" (" + this.transList.get(i).get(j)[0] + "," + this.transList.get(i).get(j)[1] + ") ");
+			for(int j = 0; j < fsm.transList.get(i).size(); j++)
+				System.out.print(" (" + fsm.transList.get(i).get(j)[0] + "," + fsm.transList.get(i).get(j)[1] + ") ");
 			System.out.println();
 		}
 	}
@@ -271,28 +277,28 @@ public class StateMachine {
 		ArrayList<String> dictionary = new ArrayList<String>();
 		
 		int currentState = 0; int lastState = 0;
-		for(int i = 0; i < this.acceptingStates.size(); i++) // Go through all accepting states
+		for(int i = 0; i < fsm.acceptingStates.size(); i++) // Go through all accepting states
 		{
 			String w = "";
 			//System.out.println("\nAccepting States:");
 			//System.out.println(this.acceptingStates.get(i));
 			
-			currentState = this.acceptingStates.get(i);
+			currentState = fsm.acceptingStates.get(i);
 			
 			int j = 0;
-			while(this.transList.get(currentState).get(j)[1] == -1){j++;}
+			while(fsm.transList.get(currentState).get(j)[1] == -1){j++;}
 			
 			while(currentState != 0) // run backwards from accepting state until the start state is reached
 			{
 				lastState = currentState;
 				
 				
-				currentState = this.transList.get(currentState).get(j)[1];
+				currentState = fsm.transList.get(currentState).get(j)[1];
 				
 				j = 0;
-				while(this.transList.get(currentState).get(j)[0] != lastState){j++;}
+				while(fsm.transList.get(currentState).get(j)[0] != lastState){j++;}
 				
-				w = this.transChars.get(j) + w;
+				w = fsm.transChars.get(j) + w;
 				
 			}
 			dictionary.add(w);

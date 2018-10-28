@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 
+import org.junit.Before;
 import org.junit.Test;
 
 import EditDistance.EditDistance;
@@ -22,7 +23,7 @@ public class TestClass {
 	/**
 	 * JUnit test for checking that verifying words with the FSM class works
 	 */
-	@Test
+	/*@Test
 	public void testFSMDictionaryCheck() 
 	{
 		
@@ -59,14 +60,14 @@ public class TestClass {
 						assertFalse(fsm.verifyWord(word));
 				}
 		
-	
+	]
 		fsm.printTransitionTable();
-	}
+	}*/
 	
 	/**
 	 * JUnit test for testing that the words from the dictionary can be retrieved with the FSM
 	 */
-	@Test
+	/*@Test
 	public void runThroughDictionary()
 	{
 		StateMachine fsm = new StateMachine();
@@ -90,12 +91,12 @@ public class TestClass {
 		ArrayList<String> words = fsm.readDictionary();
 		for(int i = 0; i < words.size(); i++)
 			assertTrue(testWords.contains(words.get(i)));
-	}
+	}*/
 	
 	/**
 	 * JUnit test for the edit distance algorithm (EditDistance class)
 	 */
-	@Test
+	/*@Test
 	public void testEditDistanceAlgorithm()
 	{
 		EditDistance ed = new EditDistance();
@@ -108,9 +109,9 @@ public class TestClass {
 		assertEquals(ed.getEditDistance("dadection", "addiction"), 2);
 		
 		assertEquals(ed.getEditDistance("ha", "hat"), 1);
-	}
+	}*/
 	
-	@Test
+	/*@Test
 	public void testNGram()
 	{
 		StateMachine.getFSM();
@@ -153,7 +154,7 @@ public class TestClass {
 		assertEquals(percentage[0], (double)2/7, 0.01);
 		assertEquals(percentage[1], (double)5/7, 0.01);
 		
-	}
+	}*/
 	
 	/*@Test
 	public void testSentence()
@@ -180,20 +181,39 @@ public class TestClass {
 		System.out.println(corrected);
 	}*/
 	
+	/*@Test
+	public void testEditDistance()
+	{
+		EditDistance ed = new EditDistance();
+		ArrayList<String> dictionary = StateMachine.getFSM().readDictionary();
+		System.out.println("dictionary read");
+		
+		for(int i = 0; i < dictionary.size(); i++)
+			ed.getEditDistance("shoxs", dictionary.get(i));
+		
+		System.out.println(ed.getCandidates().toString());
+	
+	}*/
+	
+
+	@Before
+	public void createStateMachine()
+	{
+
+		StateMachine.getFSM().readDictionaryFile();
+		StateMachine.getFSM().buildFSM();
+		System.out.println("\nFSM built");
+	}
 	
 	@Test
 	public void testDictionary() throws IOException
 	{
 		String[] fileList = getFileSystem();
 		
-		StateMachine m = new StateMachine();
-		m.readDictionaryFile();
-		//m.buildFSM();
-		System.out.println("\nFSM built");
 		
 		Algorithms alg = new Algorithms();
 		
-		int n = 1;
+		int n = 3;
 		alg.createList(n);
 		alg.setN(n);
 		alg.setSplit(10);
@@ -226,8 +246,10 @@ public class TestClass {
 		w.write(test[1]);
 		w.close();
 		
-		alg.getList(n).printAll(50);
-	
+		//alg.getList(n).printAll(0, n);
+		alg.createTemporyTestText("test2");
+		
+		alg.makeCorrectionToTestText("modifiedTestText");
 	}
 
 	

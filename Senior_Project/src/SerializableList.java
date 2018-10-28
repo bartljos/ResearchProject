@@ -1,3 +1,6 @@
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -13,6 +16,17 @@ public class SerializableList implements Serializable{
 	public void addWord(String w)
 	{
 		
+		String[] tmp = w.split(" ");
+		
+
+		w = "";
+		for(int i = 0; i < tmp.length -1; i++)
+		{
+			//System.out.println(tmp[i]);
+			if(!tmp[i].equals(" ") && !tmp[i].equals("\t"))
+				w+=tmp[i] + " ";
+		}
+		w+=tmp[tmp.length-1];
 		
 		
 		if(w.length() > 1)
@@ -39,21 +53,30 @@ public class SerializableList implements Serializable{
 		
 	}
 	
-	public void printAll(int printDelay)
+	public void printAll(int printDelay, int n)
 	{
-		//System.out.println(wordList.toString() + " ---> "	+ wordList.size());
-		//System.out.println(occurences.toString() + " ---> "	+ occurences.size());
-		
-		for(int i = 0; i < wordList.size(); i++)
-		{
-			try {
-				Thread.sleep(printDelay);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+		try {
+			BufferedWriter br = new BufferedWriter(new FileWriter("occurences_n=" + n));
+			for(int i = 0; i < wordList.size(); i++)
+			{
+				br.write(wordList.get(i) + " ---> " + occurences.get(i) + System.lineSeparator());
 			}
-			System.out.println(" " + wordList.get(i) +  " --->  " + occurences.get(i));
-		}
+			br.close();
+			
+			
+			for(int i = 0; i < wordList.size(); i++)
+			{
+				try {
+					Thread.sleep(printDelay);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				System.out.println(" " + wordList.get(i) +  " --->  " + occurences.get(i));
+			}
+		
+		} catch (IOException e1) {}
+			
 	}
 	
 

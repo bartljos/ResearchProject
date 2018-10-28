@@ -1,18 +1,14 @@
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
 import EditDistance.EditDistance;
 import StateMachine.StateMachine;
-import sun.awt.FwDispatcher;
 
 public class Algorithms {
 	
@@ -26,7 +22,18 @@ public class Algorithms {
 	{
 		String[] finalSet = {" ", " "};
 		String[] tmp = {" ", " "};
-		for(int i = 0; i < filePaths.size(); i++)
+		boolean listAvailable = false;
+		
+		try {
+			FileInputStream f = new FileInputStream("n=" + n);
+			ObjectInputStream o = new ObjectInputStream(f);
+			this.lists.set(n-1,(SerializableList)o.readObject());
+			o.close();
+			listAvailable = true;
+			System.out.println("A list for n=" + n + " is available");
+		}catch(Exception e) {	System.out.println ("A list for n=" + n + " is NOT available");}
+		
+		for(int i = 0; i < filePaths.size()-43; i++)
 		{
 			System.out.println("now working on: " + filePaths.get(i));
 			System.out.println("parsing file");
@@ -34,10 +41,24 @@ public class Algorithms {
 			finalSet[0] += tmp[0] + '\n';
 			finalSet[1] += tmp[1] +'\n';
 			
+			if(!listAvailable)
+			{
+				this.setText(tmp[0]);
+				System.out.println("creating n gram");
+				this.createNGram();
+			}else
+				System.out.println("List was read from file");
+		}
+		
+		if(!listAvailable)
+		{
+			try {
+				FileOutputStream f = new FileOutputStream("n=" + n);
+				ObjectOutputStream o = new ObjectOutputStream(f);
+				o.writeObject(this.lists.get(n-1));
+				o.close();
+			}catch(Exception e) {}
 			
-			this.setText(tmp[0]);
-			System.out.println("creating n gram");
-			this.createNGram();
 		}
 		return finalSet;
 	}	
@@ -199,14 +220,6 @@ public class Algorithms {
 	
 	public void createNGram()
 	{
-		/*try {
-			FileInputStream f = new FileInputStream("n=" + n);
-			ObjectInputStream o = new ObjectInputStream(f);
-			sl = (SerializableList)o.readObject();
-			o.close();
-			return sl;
-		}catch(Exception e) {}*/
-		
 	
 		int i = 0;
 		while(text.charAt(i) == ' ')
@@ -246,15 +259,7 @@ public class Algorithms {
 
 			}
 		}
-		
-		try {
-			FileOutputStream f = new FileOutputStream("n=" + n);
-			ObjectOutputStream o = new ObjectOutputStream(f);
-			//o.writeObject(sl);
-			o.close();
-		}catch(Exception e) {}
-		
-		//sl.printAll();
+
 	}
 
 
@@ -301,4 +306,156 @@ public class Algorithms {
 			filePaths.add(path);
 		return filePaths.indexOf(path);
 	}
+	
+	public void createTemporyTestText(String path)
+	{
+		String document = "", tmp = ""; String[] split_document;
+		try {
+			BufferedReader br = new BufferedReader(new FileReader(path));
+			BufferedWriter bw = new BufferedWriter(new FileWriter("modifiedTestText"));
+			System.out.println("reading test text");
+			while((tmp = br.readLine()) != null)
+			{
+				document += tmp + " " + System.lineSeparator();
+			}
+			
+		
+			split_document = document.split(" ");
+			
+			System.out.println("document was split. . . checking dictionary");
+			tmp = "";
+			int wordIndex = 0;
+			for(int i = 0; i < split_document.length; i++)
+			{
+				//System.out.println("split word " + split_document[i]);
+				if(!split_document[i].equals(" ") && !split_document[i].equals(System.lineSeparator()) && !split_document[i].equals("\t") && !split_document[i].equals(""))
+				{
+					if(StateMachine.getFSM().verifyWord(split_document[i]))
+					{
+						tmp += " " + split_document[i];
+						wordIndex++;
+					}else
+					{
+						tmp += " [" + wordIndex + "]";
+						wordIndex++;
+					}
+				}else
+				{
+					if(split_document[i].equals(System.lineSeparator()))
+						tmp += split_document[i];
+					else
+						tmp += split_document[i] + " ";
+				}
+				
+			}
+			System.out.println("end");
+			tmp = insertErrors(tmp);
+			
+			
+			bw.write(tmp);
+			br.close();
+			bw.close();
+			
+			//System.out.print(tmp);
+		} catch (Exception e) {
+		
+			e.printStackTrace();
+		}
+	}
+	
+	private String insertErrors(String s)
+	{
+		System.out.println("inserting errors");
+		String tmp = "";
+		
+		for(int i = 0; i < s.length(); i++)
+		{
+			if(s.charAt(i) <= 'Z' && s.charAt(i) >= 'A')
+			{
+				tmp += changeCharacter(s.charAt(i), .05);
+			}else
+			if(s.charAt(i) <= 'z' && s.charAt(i) >= 'a')
+			{
+				tmp += changeCharacter(s.charAt(i), .05);
+			}else
+				tmp += s.charAt(i);
+			
+		}
+		return tmp;
+	}
+	
+	private char changeCharacter(char original, double errorRate)
+	{
+		char newChar = original;
+		double val = Math.random();
+		
+		if(val <= errorRate)
+		{
+			newChar = 'x';
+		}
+		
+		return newChar;
+	}
+	
+	public void makeCorrectionToTestText(String path)
+	{
+		String document = "", tmp = ""; String[] split_document;
+		try {
+			BufferedReader br = new BufferedReader(new FileReader(path));
+			//BufferedWriter bw = new BufferedWriter(new FileWriter("modifiedTestText"));
+			System.out.println("reading test text");
+			while((tmp = br.readLine()) != null)
+			{
+				document += tmp + " ";
+			}
+			
+			document = document.replaceAll(System.lineSeparator(), "");
+			
+			while(document.contains("  "))
+			{
+				document = document.replaceAll("  ", " ");
+			}
+			
+			
+			split_document = document.split(" ");
+			String nPhrase = "";
+			
+			
+			for(int i = 0; i < 25; i++)
+			{	
+				int length = 0; 
+				for(length = 0; length < n; i++)
+				{
+					
+					if(!split_document[i].equals("") && !split_document[i].equals(" "))
+					{
+						nPhrase += split_document[i] + " ";
+						length++;
+					}
+				}
+				i = i - n;
+				nPhrase = nPhrase.substring(0, nPhrase.length()-1);
+				
+				String[] n_words = nPhrase.split(" ");
+				//if(length == n)
+				//{
+					System.out.println("phrase: " + nPhrase);
+					
+					System.out.println("word in question: "  + n_words[n_words.length-1]);
+					if(StateMachine.getFSM().verifyWord(n_words[n_words.length-1]))
+					{
+						System.out.println("IS A WORD");
+					}else
+						System.out.println("NOT A WORD");
+					
+					System.out.println();
+				//}
+				nPhrase = "";
+			}
+			br.close();
+			//bw.close();
+		}catch(Exception e) {
+			
+		}
+	}	
 }
