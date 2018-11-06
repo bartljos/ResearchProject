@@ -10,6 +10,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Collections;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -213,10 +214,11 @@ public class TestClass {
 		
 		Algorithms alg = new Algorithms();
 		
-		int n = 2;
-		alg.createList(n);
+		int n = 3;
 		alg.setN(n);
-		alg.setSplit(10);
+		alg.createList(n);
+		
+		alg.setSplit(300);
 		
 		for(int i = 0; i < fileList.length; i++)
 		{
@@ -225,33 +227,68 @@ public class TestClass {
 		}
 		
 		System.out.println("create files");
-		String test[] = alg.runFiles();
-		
+		//String test[] = alg.runFiles();
+		alg.readListFromFile(n);
+	
 		
 		System.out.println("n and text set for analysis");
-		//System.out.println(m.readDictionary() + " ---> " + m.readDictionary().size());
+
 		
 		
-	
-		//System.out.println("create N =" + 2);
-		
-		
-		
-		
-		FileWriter w = new FileWriter("test1");
+		/*FileWriter w = new FileWriter("test1");
 		w.write(test[0]);
 		w.close();
 		
 		w = new FileWriter("test2");
 		w.write(test[1]);
-		w.close();
-		
-		//alg.getList(n).printAll(0, n);
+		w.close();*/
+	
+		//alg.getList(n).printAll(0, n);*
 		alg.createTemporyTestText("test2");
 		
 		alg.makeCorrectionToTestText("modifiedTestText");
+		System.out.println(alg.getCorrectedText());
+		alg.writeCorrectedTextFile("modifiedTestText");
+
+		int[] results = alg.comparTwoDocuments("modifiedTestText", "test2");
+		System.out.println("similarities: " + results[0] + "    differences:  " + results[1]);
+		
+		System.out.println("AFTER CHANGES");
+		results = alg.comparTwoDocuments("correctedText", "test2");
+		System.out.println("similarities: " + results[0] + "    differences:  " + results[1]);
+		
 	}
 
+	/*@Test
+	public void testComparingDocs()
+	{
+		Algorithms alg = new Algorithms();
+		
+	}*/
+	
+	/*@Test
+	public void testWordReplacement()
+	{
+		Algorithms alg = new Algorithms();
+		assertEquals(alg.placeWord("helo.", "hello"), "hello.");
+		assertEquals(alg.placeWord("\"helo.", "hello"), "\"hello.");
+		assertEquals(alg.placeWord("\"helo.\"", "hello"), "\"hello.\"");
+		assertEquals(alg.placeWord("\"gf?\"", "hello"), "\"hello?\"");
+		assertEquals(alg.placeWord("fried!\"", "friend"), "friend!\"");
+	
+	}*/
+	
+	/*@Test
+	public void test()
+	{
+		Algorithms alg = new Algorithms();
+		alg.setN(2);
+		alg.createList(2);
+		alg.readListFromFile(2);
+		
+		System.out.println(Collections.binarySearch(alg.getList(2).getWordList(), "not have"));
+		System.out.println(alg.getCorrectWord(new String[] {"not", "nfve"}));
+	}*/
 	
 	public String[] getFileSystem() throws IOException
 	{

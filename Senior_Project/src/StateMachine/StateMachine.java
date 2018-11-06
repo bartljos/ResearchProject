@@ -76,7 +76,17 @@ public class StateMachine {
 				}else
 					return "";
 				
-		
+		for(int i = 1; i < tmp.length(); i++)
+		{
+			if(tmp.charAt(i) < 'A' || tmp.charAt(i) > 'Z')
+			{
+				break;
+			}else
+				if(i == tmp.length()-1)
+				{
+					return "";
+				}
+		}
 		return tmp.toLowerCase();
 		
 	}
@@ -198,7 +208,19 @@ public class StateMachine {
 	 */
 	public boolean verifyWord(String word)
 	{
-		word = word.replaceAll("\\;|\\,|\\.|\\!|\\?|\"|\\:", "").toLowerCase();
+		char c = word.charAt(word.length()-1);
+		
+		if(c == '\"')
+			word = word.substring(0, word.length()-1);
+		
+		c = word.charAt(word.length()-1);
+		if(c =='.' || c== ';' || c ==',' || c==':' || c == '?' || c == '!')
+			word = word.substring(0, word.length()-1);
+		
+		c = word.charAt(0);
+		if(c == '\"')
+			word = word.substring(1, word.length());
+	
 		
 		int currentState = 0; // start at the start state
 		for(int i = 0; i < word.length(); i++)

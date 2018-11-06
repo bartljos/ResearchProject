@@ -10,7 +10,7 @@ public class EditDistance {
 	
 	public EditDistance()
 	{
-		threshold = 5;
+		threshold = 2;
 	}
 	
 	public ArrayList<String> getCandidates()
@@ -90,9 +90,9 @@ public class EditDistance {
 		{
 			this.candidates.add(w2.substring(1));
 		}else
-			if(ed < threshold)
+			if(ed < threshold && ed != 0)
 			{
-				threshold = ed;
+				threshold = ed; //System.out.println(candidates.toString());
 				this.candidates.clear();
 				this.candidates.add(w2.substring(1));
 			}
@@ -130,7 +130,7 @@ public class EditDistance {
 	public boolean clearCandidates()
 	{
 		this.candidates.clear();
-		this.threshold = 5;
+		//this.threshold = 5;
 		if(this.candidates.isEmpty())
 			return true;
 		else

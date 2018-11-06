@@ -53,6 +53,16 @@ public class SerializableList implements Serializable{
 		
 	}
 	
+	public List<Integer> getOccurences()
+	{
+		return this.occurences;
+	}
+	
+	public List<String> getWordList()
+	{
+		return this.wordList;
+	}
+	
 	public void printAll(int printDelay, int n)
 	{
 		try {

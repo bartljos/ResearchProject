@@ -7,16 +7,19 @@ import java.io.FileWriter;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
+import java.util.Collections;
+
 import EditDistance.EditDistance;
 import StateMachine.StateMachine;
 
 public class Algorithms {
 	
-	EditDistance ed = null;
+	EditDistance ed = new EditDistance();
 	private String text = "";
 	private int n = -1; private int splitPoint = 0;
 	private ArrayList<String> filePaths = new ArrayList<String>();
 	private ArrayList<SerializableList> lists = new ArrayList<SerializableList>();
+	private ArrayList<String> dictionary = StateMachine.getFSM().readDictionary();
 	
 	public String[] runFiles()
 	{
@@ -33,7 +36,7 @@ public class Algorithms {
 			System.out.println("A list for n=" + n + " is available");
 		}catch(Exception e) {	System.out.println ("A list for n=" + n + " is NOT available");}
 		
-		for(int i = 0; i < filePaths.size()-43; i++)
+		for(int i = 0; i < filePaths.size(); i++)
 		{
 			System.out.println("now working on: " + filePaths.get(i));
 			System.out.println("parsing file");
@@ -63,6 +66,19 @@ public class Algorithms {
 		return finalSet;
 	}	
 	
+	public boolean readListFromFile(int n)
+	{
+		try {
+			FileInputStream f = new FileInputStream("n=" + n);
+			ObjectInputStream o = new ObjectInputStream(f);
+			this.lists.set(n-1,(SerializableList)o.readObject());
+			o.close();
+			System.out.println("A list for n=" + n + " is available");
+		}catch(Exception e) {	System.out.println ("A list for n=" + n + " is NOT available");}
+		
+		return true;
+	}
+	
 	public void createList(int n)
 	{
 		if(lists.size() <= n)
@@ -70,11 +86,15 @@ public class Algorithms {
 				lists.add(new SerializableList());
 		else
 			lists.set(n-1, new SerializableList());
+		System.out.println("list size: " + lists.size());
 	}
 	
 	
 	public SerializableList getList(int n)
 	{
+		//System.out.println(n-1);
+		//if(lists.get(n-1) == null)
+			//System.out.println("list is null, sorry :(");
 		return lists.get(n-1);
 	}
 	
@@ -273,7 +293,7 @@ public class Algorithms {
 		for(int i = 0; i < occurences.size(); i++)
 			total += occurences.get(i);
 		
-		System.out.println("total: " + total);
+		//System.out.println("total: " + total);
 		
 		String[] roller = new String[total];
 		int index = 0;
@@ -286,17 +306,18 @@ public class Algorithms {
 			}
 		}
 		
-		for(int i = 0; i < roller.length; i++)
-			System.out.print("  " + roller[i]);
-		System.out.println();
+		//for(int i = 0; i < roller.length; i++)
+		//	System.out.print("  " + roller[i]);
+		//System.out.println();
 		
 		index = (int) (Math.random() * total);
-		System.out.println(index + " -> index");
+		//System.out.println(index + " -> index");
 		word = roller[index];
-		System.out.println(word);
+		//System.out.println(word);
 		
 		String tmp[] = word.split(" ");
 		word = tmp[tmp.length-1];
+		//System.out.println("New word is: " + word);
 		return word;
 	}
 	
@@ -318,8 +339,7 @@ public class Algorithms {
 			{
 				document += tmp + " " + System.lineSeparator();
 			}
-			
-		
+				
 			split_document = document.split(" ");
 			
 			System.out.println("document was split. . . checking dictionary");
@@ -327,11 +347,16 @@ public class Algorithms {
 			int wordIndex = 0;
 			for(int i = 0; i < split_document.length; i++)
 			{
+				if(i %50 == 0)
+				{
+					System.out.println("completed: " + (((float)i/split_document.length) * 100) + " %");
+				}
 				//System.out.println("split word " + split_document[i]);
 				if(!split_document[i].equals(" ") && !split_document[i].equals(System.lineSeparator()) && !split_document[i].equals("\t") && !split_document[i].equals(""))
 				{
-					if(StateMachine.getFSM().verifyWord(split_document[i]))
+					if(StateMachine.getFSM().verifyWord(split_document[i].toLowerCase()))
 					{
+						//System.out.println("word: " + split_document[i]);
 						tmp += " " + split_document[i];
 						wordIndex++;
 					}else
@@ -370,13 +395,14 @@ public class Algorithms {
 		
 		for(int i = 0; i < s.length(); i++)
 		{
+			
 			if(s.charAt(i) <= 'Z' && s.charAt(i) >= 'A')
 			{
-				tmp += changeCharacter(s.charAt(i), .05);
+				tmp += changeCharacter(s.charAt(i), .0);
 			}else
 			if(s.charAt(i) <= 'z' && s.charAt(i) >= 'a')
 			{
-				tmp += changeCharacter(s.charAt(i), .05);
+				tmp += changeCharacter(s.charAt(i), .0);
 			}else
 				tmp += s.charAt(i);
 			
@@ -391,10 +417,21 @@ public class Algorithms {
 		
 		if(val <= errorRate)
 		{
-			newChar = 'x';
+			newChar = (char)((int)((Math.random() * 26) + 97)); // System.out.println("char is: " + newChar);
 		}
 		
 		return newChar;
+	}
+	
+	private String correctedText = "";
+	private void appendWordToText(String word)
+	{
+		this.correctedText += word;
+	}
+	
+	public String getCorrectedText()
+	{
+		return this.correctedText;
 	}
 	
 	public void makeCorrectionToTestText(String path)
@@ -402,27 +439,33 @@ public class Algorithms {
 		String document = "", tmp = ""; String[] split_document;
 		try {
 			BufferedReader br = new BufferedReader(new FileReader(path));
-			//BufferedWriter bw = new BufferedWriter(new FileWriter("modifiedTestText"));
+			BufferedWriter bw = new BufferedWriter(new FileWriter("sample"));
 			System.out.println("reading test text");
 			while((tmp = br.readLine()) != null)
 			{
 				document += tmp + " ";
 			}
 			
-			document = document.replaceAll(System.lineSeparator(), "");
-			
+
 			while(document.contains("  "))
 			{
 				document = document.replaceAll("  ", " ");
 			}
 			
+			document = document.replaceAll(System.lineSeparator(), "").replaceAll("\\.", "").replaceAll(",", "").replaceAll(";", "").replaceAll("\\?", "").replaceAll("\\!", "").replaceAll("\"", "").replaceAll(":", "");
+			
 			
 			split_document = document.split(" ");
+			System.out.println("document length: " + split_document.length);
 			String nPhrase = "";
-			
-			// change 25 to split_document.length for final tests
-			for(int i = 0; i < 25; i++)
+			this.appendWordToText("Indeed ");
+			for(int i = 0; i < split_document.length; i++)
 			{	
+				if(i%200 == 0)
+				{
+					System.out.println("completed: " + (((float)i/split_document.length) * 100) + " %");
+				}
+				
 				int length = 0; 
 				for(length = 0; length < n; i++)
 				{
@@ -433,29 +476,264 @@ public class Algorithms {
 						length++;
 					}
 				}
-				i = i - n;
+				
 				nPhrase = nPhrase.substring(0, nPhrase.length()-1);
 				
 				String[] n_words = nPhrase.split(" ");
-				//if(length == n)
-				//{
-					System.out.println("phrase: " + nPhrase);
-					
-					System.out.println("word in question: "  + n_words[n_words.length-1]);
-					if(StateMachine.getFSM().verifyWord(n_words[n_words.length-1]))
+				
+
+				if(i >= n) 
+				{
+					if(StateMachine.getFSM().verifyWord(n_words[n_words.length-1].toLowerCase()))
 					{
-						System.out.println("IS A WORD");
-					}else
-						System.out.println("NOT A WORD");
 					
-					System.out.println();
-				//}
+						this.appendWordToText(n_words[n_words.length-1] + " ");
+					
+					}else
+					if(!StateMachine.getFSM().verifyWord(n_words[n_words.length-1].toLowerCase()))
+					{
+						if(n_words[n_words.length-1].charAt(n_words[n_words.length-1].length()-1) != ']' && n_words[n_words.length-1].charAt(0) != '[')
+						{
+				
+							split_document[i] = getCorrectWord(n_words);
+							this.appendWordToText(split_document[i] + " ");
+						}
+						else
+						{
+							this.appendWordToText(n_words[n_words.length-1] + " ");
+						}
+
+					}
+				}else
+				{
+					this.appendWordToText("test ");
+				}
+				i = i - length;
 				nPhrase = "";
 			}
+			bw.write(correctedText);
 			br.close();
-			//bw.close();
+			bw.close();
 		}catch(Exception e) {
-			
+			e.printStackTrace();
 		}
 	}	
+	
+	public String getCorrectWord(String[] list)
+	{
+		ed = new EditDistance();
+		String tmp = "";
+		
+		if(list[list.length-1].charAt(list[list.length-1].length()-1) == '.' || list[list.length-1].charAt(list[list.length-1].length()-1) == ',' || list[list.length-1].charAt(list[list.length-1].length()-1) == '!' || list[list.length-1].charAt(list[list.length-1].length()-1) == '?' || list[list.length-1].charAt(list[list.length-1].length()-1) == ';')
+			tmp = list[list.length-1].substring(0, list[list.length-1].length()-1);
+		else 
+			tmp = list[list.length-1];
+		
+		for(int i = 0; i < dictionary.size(); i++)
+		{
+			if(tmp.charAt(tmp.length()-1) == ',' || tmp.charAt(tmp.length()-1) == ';' || tmp.charAt(tmp.length()-1) == '.' || tmp.charAt(tmp.length()-1) == '?' || tmp.charAt(tmp.length()-1) == '!')
+			{	
+				ed.getEditDistance(tmp.substring(0, tmp.length()-1), dictionary.get(i));
+				tmp = tmp.substring(0, tmp.length()-1);
+			}
+			else
+				ed.getEditDistance(tmp, dictionary.get(i));
+		}
+		//System.out.println(ed.getCandidates().toString());
+		
+		if(ed.getCandidates().size() <= 0)
+			return list[list.length-1];
+		
+		if(ed.getCandidates().size() <= 1)
+		{
+			//System.out.println("returning with 1 candidate");
+			return ed.getCandidates().get(0);
+		}
+		
+		ArrayList<String> candidates = new ArrayList<String>();
+		ArrayList<Integer> occurences = new ArrayList<Integer>();
+		
+		for(int j = 0; j < ed.getCandidates().size(); j++)
+		{
+			tmp = "";
+			for(int i = 0; i < list.length-1; i++)
+			{
+				tmp += list[i] + " ";
+			}
+			tmp += ed.getCandidates().get(j);
+			//System.out.println("word: " + tmp);
+			//System.out.println("tmp: " + tmp);
+			
+			//System.out.println("word list size: " + this.getList(n).getWordList().size());
+			int result = Collections.binarySearch(this.getList(n).getWordList(), tmp.toLowerCase());
+			
+			
+			if(result >= 0)
+			{
+				//System.out.println("good");
+				//System.out.print("\n [" + j + "] \n");
+				candidates.add(this.getList(this.n).getWordList().get(result));
+				occurences.add(this.getList(this.n).getOccurences().get(result));
+			}//else
+			//	System.out.println("bad");
+			
+		}
+		
+		//System.out.println(ed.getCandidates().toString());
+		//System.out.println();
+		String s = this.getWord(candidates, occurences);
+		if(s.equals(""))
+			return list[list.length-1];
+		return s;
+	}
+	
+	public String placeWord(String oldWord, String newWord)
+	{
+		int start = 0; int end = oldWord.length();
+		char cs = oldWord.charAt(0);
+		char ce = oldWord.charAt(oldWord.length()-1);
+		int end2 = oldWord.length();
+		
+		//System.out.println(oldWord);
+		if(cs == '"' || cs == '(')
+			start++;
+		
+		if(ce == '"' || ce == ')')
+		{	
+			end--;
+			ce = oldWord.charAt(oldWord.length()-2);
+			//System.out.println(oldWord.charAt(oldWord.length()-2));
+		}
+			
+		if(ce == '.' || ce == ',' || ce == '?' || ce == ',' || ce == '!' || ce == ':' || ce == ';')
+			end--;
+		
+		//System.out.println(end);
+		newWord = oldWord.substring(0, start) + newWord + oldWord.substring(end, end2);
+		//System.out.println(newWord);
+		return newWord;
+	}
+	
+	public void writeCorrectedTextFile(String pathToOriginal)
+	{
+	
+		System.out.println("write new text");
+		BufferedReader br = null; BufferedWriter bw = null;
+		String textToWrite = "";
+		String[] correctedWords = this.correctedText.split(" ");
+	
+		try {
+			bw = new BufferedWriter(new FileWriter("correctedText"));
+			br = new BufferedReader(new FileReader(pathToOriginal));
+
+			int index = 0;
+			String tmp = "";
+
+			while((tmp = br.readLine()) != null)
+			{
+				String[] oldWords = tmp.split(" ");
+				
+				for(int i = 0; i < oldWords.length; i++)
+				{	
+					if(index < correctedWords.length)
+					{	
+					
+						if(!oldWords[i].equals(System.lineSeparator()) && !oldWords[i].equals("") && !oldWords[i].equals(" "))
+						{	
+							//System.out.println(oldWords[i] + " --> " + correctedWords[index]);
+							textToWrite += this.placeWord(oldWords[i], correctedWords[index]) + " ";
+					
+							index++;
+						}else
+						{	
+								textToWrite += oldWords[i] + " "; 
+						}
+					}
+				}
+				
+				textToWrite += System.lineSeparator() + " ";
+			}
+			 
+			System.out.println();
+			System.out.println(correctedWords.length);
+
+			bw.write(textToWrite);
+			br.close(); bw.close();
+		}catch(Exception e)
+		{
+			e.printStackTrace();
+		}
+	
+	}
+
+	public int[] comparTwoDocuments(String path1, String path2)
+	{
+		BufferedReader br = null, br2 = null;
+		int differences = 0; int similarities = 0;
+		
+		String[] words2, words1;
+		try {
+			br2 = new BufferedReader(new FileReader(path2));
+			br = new BufferedReader(new FileReader(path1));
+			
+			String tmp = "", tmp2;
+			String list1 = "";
+			String list2 = "";
+
+			while((tmp = br.readLine()) != null)
+			{
+				words1 = tmp.split(" ");
+				
+				for(int i = 0; i < words1.length; i++)
+				{
+					if((!words1[i].equals(" ") && !words1[i].equals("") && !words1[i].equals(System.lineSeparator())))
+					{
+						list1 += words1[i] + " ";
+					}
+				}
+	
+			}
+			 
+			while((tmp2 = br2.readLine()) != null)
+			{
+				words2 = tmp2.split(" ");
+				
+				for(int i = 0; i < words2.length; i++)
+				{
+					if((!words2[i].equals(" ") && !words2[i].equals("") && !words2[i].equals(System.lineSeparator())))
+					{
+						list2 += words2[i] + " ";
+					}
+				}
+	
+			}
+			
+			words1 = list1.split(" ");
+			words2 = list2.split(" ");
+			
+			for(int i = 0; i < words1.length && i < words2.length; i++)
+			{
+				//System.out.println(words1[i] + "   " + words2[i]);
+				if(words1[i].equals(words2[i]))
+				{
+					similarities++;
+				}else
+				{
+					if((words1[i].charAt(0) == '[' && words1[i].charAt(words1[i].length()-1) == ']') || (words2[i].charAt(0) == '[' && words2[i].charAt(words2[i].length()-1) == ']'))
+					{
+						similarities++;
+					}else
+					{
+						differences++;
+					}
+				}
+			}
+			br.close(); br2.close();
+		}catch(Exception e)
+		{
+			e.printStackTrace();
+		}
+		
+		return new int[] {similarities, differences};
+	}
 }
