@@ -398,11 +398,11 @@ public class Algorithms {
 			
 			if(s.charAt(i) <= 'Z' && s.charAt(i) >= 'A')
 			{
-				tmp += changeCharacter(s.charAt(i), .0);
+				tmp += changeCharacter(s.charAt(i), .03);
 			}else
 			if(s.charAt(i) <= 'z' && s.charAt(i) >= 'a')
 			{
-				tmp += changeCharacter(s.charAt(i), .0);
+				tmp += changeCharacter(s.charAt(i), .03);
 			}else
 				tmp += s.charAt(i);
 			
@@ -446,20 +446,34 @@ public class Algorithms {
 				document += tmp + " ";
 			}
 			
-
+            this.correctedText = "";
+			
+			
+			document = document.replaceAll(System.lineSeparator(), "").replaceAll("\\.", "").replaceAll(",", "").replaceAll(";", "").replaceAll("\\?", "").replaceAll("\\!", "").replaceAll("\"", "").replaceAll(":", "");
+			
 			while(document.contains("  "))
 			{
 				document = document.replaceAll("  ", " ");
 			}
 			
-			document = document.replaceAll(System.lineSeparator(), "").replaceAll("\\.", "").replaceAll(",", "").replaceAll(";", "").replaceAll("\\?", "").replaceAll("\\!", "").replaceAll("\"", "").replaceAll(":", "");
+			int i = 0;
+			while(document.charAt(i) == ' ')
+			{
+				i++;
+			}
 			
+			document = document.substring(i, document.length());
 			
 			split_document = document.split(" ");
 			System.out.println("document length: " + split_document.length);
 			String nPhrase = "";
-			this.appendWordToText("Indeed ");
-			for(int i = 0; i < split_document.length; i++)
+			
+			for(i = 0; i < n-1; i++)
+			{
+				this.appendWordToText(split_document[i] + " ");
+			}
+			
+			for(i = 0; i < split_document.length; i++)
 			{	
 				if(i%200 == 0)
 				{
@@ -469,21 +483,17 @@ public class Algorithms {
 				int length = 0; 
 				for(length = 0; length < n; i++)
 				{
-					
-					if(!split_document[i].equals("") && !split_document[i].equals(" "))
-					{
-						nPhrase += split_document[i] + " ";
-						length++;
-					}
+					nPhrase += split_document[i] + " ";
+					length++;		
 				}
 				
 				nPhrase = nPhrase.substring(0, nPhrase.length()-1);
 				
+				//System.out.println("nPhrase: " + nPhrase);
 				String[] n_words = nPhrase.split(" ");
 				
+				i = i - n;
 
-				if(i >= n) 
-				{
 					if(StateMachine.getFSM().verifyWord(n_words[n_words.length-1].toLowerCase()))
 					{
 					
@@ -495,8 +505,8 @@ public class Algorithms {
 						if(n_words[n_words.length-1].charAt(n_words[n_words.length-1].length()-1) != ']' && n_words[n_words.length-1].charAt(0) != '[')
 						{
 				
-							split_document[i] = getCorrectWord(n_words);
-							this.appendWordToText(split_document[i] + " ");
+							split_document[i + n - 1] = getCorrectWord(n_words);
+							this.appendWordToText(split_document[i + n - 1] + " ");
 						}
 						else
 						{
@@ -504,18 +514,14 @@ public class Algorithms {
 						}
 
 					}
-				}else
-				{
-					this.appendWordToText("test ");
-				}
-				i = i - length;
+				
 				nPhrase = "";
 			}
 			bw.write(correctedText);
 			br.close();
 			bw.close();
 		}catch(Exception e) {
-			e.printStackTrace();
+			return;
 		}
 	}	
 	
@@ -533,7 +539,7 @@ public class Algorithms {
 		{
 			if(tmp.charAt(tmp.length()-1) == ',' || tmp.charAt(tmp.length()-1) == ';' || tmp.charAt(tmp.length()-1) == '.' || tmp.charAt(tmp.length()-1) == '?' || tmp.charAt(tmp.length()-1) == '!')
 			{	
-				ed.getEditDistance(tmp.substring(0, tmp.length()-1), dictionary.get(i));
+				ed.getEditDistance(tmp.substring(0, tmp.length()-1).toLowerCase(), dictionary.get(i));
 				tmp = tmp.substring(0, tmp.length()-1);
 			}
 			else

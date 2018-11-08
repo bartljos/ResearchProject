@@ -2,6 +2,7 @@ import static org.junit.Assert.*;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -206,18 +207,14 @@ public class TestClass {
 		System.out.println("\nFSM built");
 	}
 	
-	@Test
+	/*@Test
 	public void testDictionary() throws IOException
 	{
 		String[] fileList = getFileSystem();
 		
 		
 		Algorithms alg = new Algorithms();
-		
-		int n = 3;
-		alg.setN(n);
-		alg.createList(n);
-		
+
 		alg.setSplit(300);
 		
 		for(int i = 0; i < fileList.length; i++)
@@ -228,36 +225,61 @@ public class TestClass {
 		
 		System.out.println("create files");
 		//String test[] = alg.runFiles();
-		alg.readListFromFile(n);
-	
 		
-		System.out.println("n and text set for analysis");
-
+		alg.createList(3);
+		for(int i = 0; i < 3; i++)
+		{
+			BufferedWriter bw = new BufferedWriter(new FileWriter("RESULTS", true));
+			bw.write(System.lineSeparator() + "TRIAL #" + (i+1) + "" + System.lineSeparator());
+			bw.close();
+			alg.createTemporyTestText("test2");
+			
+			for(int n = 1; n <=3; n++)
+			{
+				bw = new BufferedWriter(new FileWriter("RESULTS", true));
+				
+				alg.setN(n);
+				alg.readListFromFile(n);
+			
+				
+				System.out.println("n and text set for analysis");
 		
+				
+				
+				FileWriter w = new FileWriter("test1");
+				w.write(test[0]);
+				w.close();
+				
+				w = new FileWriter("test2");
+				w.write(test[1]);
+				w.close();
+			
+				//alg.getList(n).printAll(0, n);
+				
+				alg.makeCorrectionToTestText("modifiedTestText");
+				alg.writeCorrectedTextFile("modifiedTestText");
 		
-		/*FileWriter w = new FileWriter("test1");
-		w.write(test[0]);
-		w.close();
-		
-		w = new FileWriter("test2");
-		w.write(test[1]);
-		w.close();*/
-	
-		//alg.getList(n).printAll(0, n);*
-		alg.createTemporyTestText("test2");
-		
-		alg.makeCorrectionToTestText("modifiedTestText");
-		System.out.println(alg.getCorrectedText());
-		alg.writeCorrectedTextFile("modifiedTestText");
-
-		int[] results = alg.comparTwoDocuments("modifiedTestText", "test2");
-		System.out.println("similarities: " + results[0] + "    differences:  " + results[1]);
-		
-		System.out.println("AFTER CHANGES");
-		results = alg.comparTwoDocuments("correctedText", "test2");
-		System.out.println("similarities: " + results[0] + "    differences:  " + results[1]);
-		
-	}
+				int[] results = alg.comparTwoDocuments("modifiedTestText", "test2");
+				bw.write("n = " + n + "" + System.lineSeparator());
+				bw.write(System.lineSeparator() + "BEFORE CHANGES" + System.lineSeparator());
+				bw.write("similarities: " + results[0] + "    differences:  " + results[1] + System.lineSeparator());
+				bw.write("Percent Errors in Text: " + (int)((float)results[1]/(results[1] + results[0]) * 100));
+				//System.out.println("similarities: " + results[0] + "    differences:  " + results[1]);
+				
+				//System.out.println("AFTER CHANGES");
+				results = alg.comparTwoDocuments("correctedText", "test2");
+				//System.out.println("similarities: " + results[0] + "    differences:  " + results[1]);
+				
+				
+				bw.write(System.lineSeparator() + "AFTER CHANGES");
+				bw.write(System.lineSeparator() + "similarities: " + results[0] + "    differences:  " + results[1]);
+				bw.write(System.lineSeparator() + "Percent Errors in Text: " + (int)((float)results[1]/(results[1] + results[0]) * 100));
+				bw.write(System.lineSeparator() + "-----------------------------" + System.lineSeparator());
+				
+				bw.close();
+			}
+		}
+	}*/
 
 	/*@Test
 	public void testComparingDocs()

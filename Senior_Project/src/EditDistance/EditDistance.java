@@ -25,7 +25,8 @@ public class EditDistance {
 	 */
 	public int getEditDistance(String w1, String w2)
 	{
-		
+		w1 = w1.toLowerCase();
+		w2 = w2.toLowerCase();
 		//System.out.println("\nrunning edit distance check:");
 		int ed = 0;
 		w1 = " " + w1;
