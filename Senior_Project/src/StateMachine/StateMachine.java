@@ -133,7 +133,7 @@ public class StateMachine {
 	 * This function builds the character list for the transitions by evaluating the words in the dictionary and adding any
 	 * not yet seen characters to the list
 	 */
-	private void buildCharacterList()
+	public void buildCharacterList()
 	{
 		for(int i = 0; i < fsm.dictionary.size(); i++)
 		{
@@ -152,7 +152,7 @@ public class StateMachine {
 	 * This function build the necessary states for a word, from the start state to an accepting  state
 	 * @param word, the word to add to the FSM
 	 */
-	private void buildState(String word)
+	public void buildState(String word)
 	{
 		int currentState = 0;
 		int lastState = 0;
@@ -208,19 +208,6 @@ public class StateMachine {
 	 */
 	public boolean verifyWord(String word)
 	{
-		char c = word.charAt(word.length()-1);
-		
-		if(c == '\"')
-			word = word.substring(0, word.length()-1);
-		
-		c = word.charAt(word.length()-1);
-		if(c =='.' || c== ';' || c ==',' || c==':' || c == '?' || c == '!')
-			word = word.substring(0, word.length()-1);
-		
-		c = word.charAt(0);
-		if(c == '\"')
-			word = word.substring(1, word.length());
-	
 		
 		int currentState = 0; // start at the start state
 		for(int i = 0; i < word.length(); i++)

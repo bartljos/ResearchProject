@@ -10,7 +10,7 @@ public class EditDistance {
 	
 	public EditDistance()
 	{
-		threshold = 2;
+		threshold = 3;
 	}
 	
 	public ArrayList<String> getCandidates()
@@ -85,13 +85,16 @@ public class EditDistance {
 		}*/
 		ed = matrix[w1.length()-1][w2.length()-1];
 		
+		if(ed == 0)
+			return 0;
+		
 		//System.out.println(w1 + " ----> " + w2 + " = " + ed + "\n\n");
 		//System.out.println("threshold: " + this.threshold);
 		if (ed == threshold)
 		{
 			this.candidates.add(w2.substring(1));
 		}else
-			if(ed < threshold && ed != 0)
+			if(ed < threshold && ed > 0)
 			{
 				threshold = ed; //System.out.println(candidates.toString());
 				this.candidates.clear();

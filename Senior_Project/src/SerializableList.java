@@ -16,24 +16,6 @@ public class SerializableList implements Serializable{
 	public void addWord(String w)
 	{
 		
-		String[] tmp = w.split(" ");
-		
-
-		w = "";
-		for(int i = 0; i < tmp.length -1; i++)
-		{
-			//System.out.println(tmp[i]);
-			if(!tmp[i].equals(" ") && !tmp[i].equals("\t"))
-				w+=tmp[i] + " ";
-		}
-		w+=tmp[tmp.length-1];
-		
-		
-		if(w.length() > 1)
-		{
-			if(w.charAt(w.length()-1) == '\n')
-				w = w.substring(0, w.length()-2);
-		}
 		
 		w = w.toLowerCase();
 		int result = Collections.binarySearch(wordList, w);
@@ -63,17 +45,20 @@ public class SerializableList implements Serializable{
 		return this.wordList;
 	}
 	
-	public void printAll(int printDelay, int n)
+	public void printAll(int printDelay, int n, boolean writeToFile)
 	{
-		try {
+		if(writeToFile)
+		{
+			try {
 			BufferedWriter br = new BufferedWriter(new FileWriter("occurences_n=" + n));
 			for(int i = 0; i < wordList.size(); i++)
 			{
 				br.write(wordList.get(i) + " ---> " + occurences.get(i) + System.lineSeparator());
 			}
 			br.close();
-			
-			
+			} catch (IOException e1) {}
+		}else {
+		
 			for(int i = 0; i < wordList.size(); i++)
 			{
 				try {
@@ -85,9 +70,7 @@ public class SerializableList implements Serializable{
 				System.out.println(" " + wordList.get(i) +  " --->  " + occurences.get(i));
 			}
 		
-		} catch (IOException e1) {}
+		}
 			
 	}
-	
-
 }

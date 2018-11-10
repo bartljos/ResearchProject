@@ -1,5 +1,10 @@
 import static org.junit.Assert.*;
 
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.GridLayout;
+import java.awt.Point;
+import java.awt.Toolkit;
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -13,9 +18,16 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Collections;
 
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+
 import org.junit.Before;
 import org.junit.Test;
 
+import com.sun.glass.ui.Screen;
+
+import DemoComponents.Display;
 import EditDistance.EditDistance;
 import StateMachine.StateMachine;
 
@@ -97,6 +109,8 @@ public class TestClass {
 	
 	/**
 	 * JUnit test for the edit distance algorithm (EditDistance class)
+	 * @throws InterruptedException 
+	 * @throws IOException 
 	 */
 	/*@Test
 	public void testEditDistanceAlgorithm()
@@ -207,7 +221,118 @@ public class TestClass {
 		System.out.println("\nFSM built");
 	}
 	
+	
 	/*@Test
+	public void testStemmingClass()
+	{
+		System.out.println(StateMachine.getFSM().verifyWord("happiness"));
+		System.out.println("word: " + StemmingClass.checkWord("happiness"));
+		System.out.println(StateMachine.getFSM().verifyWord("happiness"));
+		
+		System.out.println(StateMachine.getFSM().verifyWord("coolness"));
+		System.out.println("word: " + StemmingClass.checkWord("coolness"));
+		System.out.println(StateMachine.getFSM().verifyWord("coolness"));
+		
+		System.out.println(StateMachine.getFSM().verifyWord("fanciness"));
+		System.out.println("word: " + StemmingClass.checkWord("fanciness"));
+		System.out.println(StateMachine.getFSM().verifyWord("fanciness"));
+		
+		System.out.println(StateMachine.getFSM().verifyWord("penniless"));
+		System.out.println("word: " + StemmingClass.checkWord("penniless"));
+		System.out.println(StateMachine.getFSM().verifyWord("penniless"));
+		
+		System.out.println(StateMachine.getFSM().verifyWord("happier"));
+		System.out.println("word: " + StemmingClass.checkWord("happier"));
+		System.out.println(StateMachine.getFSM().verifyWord("happier"));
+		
+		System.out.println(StateMachine.getFSM().verifyWord("funnier"));
+		System.out.println("word: " + StemmingClass.checkWord("funnier"));
+		System.out.println(StateMachine.getFSM().verifyWord("funnier"));
+		
+		System.out.println(StateMachine.getFSM().verifyWord("hats"));
+		System.out.println("word: " + StemmingClass.checkWord("hats"));
+		System.out.println(StateMachine.getFSM().verifyWord("hats"));
+		
+		System.out.println(StateMachine.getFSM().verifyWord("siblings"));
+		System.out.println("word: " + StemmingClass.checkWord("siblings"));
+		System.out.println(StateMachine.getFSM().verifyWord("siblings"));
+		
+	
+	}*/
+	
+	
+	/*@Test
+	public void testEditDistanceAtZero()
+	{
+		EditDistance ed = new EditDistance();
+		ArrayList<String> dictionary = StateMachine.getFSM().readDictionary();
+		
+		for(int i = 0; i < dictionary.size(); i++)
+			ed.getEditDistance("cat", dictionary.get(i));
+		
+		System.out.println(ed.getCandidates().toString() + " contains: " + ed.getCandidates().contains("cat"));
+	}*/
+	
+	
+	/*@Test
+	public void testLiveDemo() throws InterruptedException, IOException
+	{
+		Algorithms alg = new Algorithms();
+		alg.createList(3);
+		for(int i = 1; i <=3; i++)
+			alg.readListFromFile(i);
+		
+		JFrame frame = new JFrame("Live Demo");
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setLayout(new GridLayout(3,1));
+		
+		Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
+		int width = (int)((double)screen.getWidth()/3);
+		int height = (int)((double)screen.getHeight()/2);
+		
+		Point center = new Point(((screen.width/2) - (width/2)), ((screen.height/2) - (height/2)));
+		
+		frame.setSize(width, height);
+		frame.setLocation(center);
+		
+		
+		JTextField textBox = new JTextField();
+		Display test = new Display();
+		test.setBackground(Color.black);
+		frame.add(test);
+	
+		frame.add(new JPanel());
+		frame.add(textBox);
+		
+		test.setCurrentText("Test setting Text");
+		frame.setVisible(true);
+		
+		alg.setN(1);
+		while(true) {
+			BufferedWriter bw = new BufferedWriter(new FileWriter("exampleOutput"));
+			bw.write(textBox.getText());
+			bw.close();
+			
+			Thread.sleep(100);
+			alg.makeCorrectionToTestText("exampleOutput");
+			alg.writeCorrectedTextFile("exampleOutput", "newOutput");
+			
+			BufferedReader br = new BufferedReader(new FileReader("newOutput"));
+			String tmp = "";
+			String newText = "";
+			while((tmp = br.readLine()) != null)
+			{
+				newText += tmp + " ";
+			}
+			br.close();
+			
+			test.setCurrentText(newText);
+			test.repaint();
+			frame.repaint();
+		}
+	}*/
+	
+	@Test
 	public void testDictionary() throws IOException
 	{
 		String[] fileList = getFileSystem();
@@ -215,8 +340,8 @@ public class TestClass {
 		
 		Algorithms alg = new Algorithms();
 
-		alg.setSplit(300);
-		
+		alg.setSplit(100);
+	
 		for(int i = 0; i < fileList.length; i++)
 		{
 			System.out.println(fileList[i]);
@@ -224,17 +349,37 @@ public class TestClass {
 		}
 		
 		System.out.println("create files");
-		//String test[] = alg.runFiles();
+		int max_n = 3;
+		int trials = 1;
 		
-		alg.createList(3);
-		for(int i = 0; i < 3; i++)
+		
+		
+		/*String test[] = alg.runFiles();
+
+		FileWriter w = new FileWriter("test1");
+		w.write(test[0]);
+		w.close();
+		
+		w = new FileWriter("test2");
+		w.write(test[1]);
+		w.close();*/
+		
+		alg.createList(max_n);
+		for(int i = 1; i <= max_n; i++)
+		{
+			alg.setN(i);
+			alg.createNGram(i);
+			alg.getList(i).printAll(0, i, true);
+		}
+
+		for(int i = 0; i < trials; i++)
 		{
 			BufferedWriter bw = new BufferedWriter(new FileWriter("RESULTS", true));
 			bw.write(System.lineSeparator() + "TRIAL #" + (i+1) + "" + System.lineSeparator());
 			bw.close();
-			alg.createTemporyTestText("test2");
+			alg.createTemporyTestText("test2", .04);
 			
-			for(int n = 1; n <=3; n++)
+			for(int n = 1; n <= max_n; n++)
 			{
 				bw = new BufferedWriter(new FileWriter("RESULTS", true));
 				
@@ -244,20 +389,11 @@ public class TestClass {
 				
 				System.out.println("n and text set for analysis");
 		
-				
-				
-				FileWriter w = new FileWriter("test1");
-				w.write(test[0]);
-				w.close();
-				
-				w = new FileWriter("test2");
-				w.write(test[1]);
-				w.close();
 			
 				//alg.getList(n).printAll(0, n);
 				
 				alg.makeCorrectionToTestText("modifiedTestText");
-				alg.writeCorrectedTextFile("modifiedTestText");
+				alg.writeCorrectedTextFile("modifiedTestText", "correctedText");
 		
 				int[] results = alg.comparTwoDocuments("modifiedTestText", "test2");
 				bw.write("n = " + n + "" + System.lineSeparator());
@@ -279,7 +415,7 @@ public class TestClass {
 				bw.close();
 			}
 		}
-	}*/
+	}
 
 	/*@Test
 	public void testComparingDocs()

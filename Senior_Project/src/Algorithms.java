@@ -21,21 +21,78 @@ public class Algorithms {
 	private ArrayList<SerializableList> lists = new ArrayList<SerializableList>();
 	private ArrayList<String> dictionary = StateMachine.getFSM().readDictionary();
 	
-	public String[] runFiles()
+	
+	public String getWordStringFromFile(String path)
 	{
-		String[] finalSet = {" ", " "};
-		String[] tmp = {" ", " "};
+		String tmp = "";
+		try {
+			BufferedReader br = new BufferedReader(new FileReader(path));
+			
+			String line = "";
+			while((line = br.readLine()) != null)
+			{
+				tmp += line;
+			}
+			
+			
+			br.close();
+		}catch(Exception e) {	System.out.println ("File " + path + "NOT available");}
+		
+		
+		tmp  = tmp.toLowerCase();
+		while(tmp.contains("  "))
+		{
+			tmp = tmp.replaceAll("  ", " ");
+		}
+		tmp = tmp.replaceAll(System.lineSeparator(), "").replaceAll("\\.", "").replaceAll(",", "").replaceAll(";", "").replaceAll("\\?", "").replaceAll("\\!", "").replaceAll("\"", "").replaceAll(":", "");
+
+		return tmp;
+	}
+	
+	public void createNGram(int n)
+	{
+
 		boolean listAvailable = false;
 		
-		try {
-			FileInputStream f = new FileInputStream("n=" + n);
-			ObjectInputStream o = new ObjectInputStream(f);
-			this.lists.set(n-1,(SerializableList)o.readObject());
-			o.close();
-			listAvailable = true;
-			System.out.println("A list for n=" + n + " is available");
-		}catch(Exception e) {	System.out.println ("A list for n=" + n + " is NOT available");}
-		
+		if(n > 0)
+		{
+			try {
+				FileInputStream f = new FileInputStream("n=" + n);
+				ObjectInputStream o = new ObjectInputStream(f);
+				this.lists.set(n-1,(SerializableList)o.readObject());
+				o.close();
+				listAvailable = true;
+				System.out.println("A list for n=" + n + " is available");
+			}catch(Exception e) {	System.out.println ("A list for n=" + n + " is NOT available");}
+	
+			if(!listAvailable)
+			{
+				System.out.println("creating n gram");
+				if(this.text.equals(""))
+					this.setText(this.getWordStringFromFile("test2"));
+				System.out.println(text);
+				this.createNGram();
+			}else
+				System.out.println("List was read from file");
+
+			if(!listAvailable)
+			{
+				try {
+					FileOutputStream f = new FileOutputStream("n=" + n);
+					ObjectOutputStream o = new ObjectOutputStream(f);
+					o.writeObject(this.lists.get(n-1));
+					o.close();
+				}catch(Exception e) {}
+				
+			}
+		}
+	}
+	
+	public String[] runFiles()
+	{
+		String[] finalSet = {"", ""};
+		String[] tmp = {"", ""};
+	
 		for(int i = 0; i < filePaths.size(); i++)
 		{
 			System.out.println("now working on: " + filePaths.get(i));
@@ -44,27 +101,13 @@ public class Algorithms {
 			finalSet[0] += tmp[0] + '\n';
 			finalSet[1] += tmp[1] +'\n';
 			
-			if(!listAvailable)
-			{
-				this.setText(tmp[0]);
-				System.out.println("creating n gram");
-				this.createNGram();
-			}else
-				System.out.println("List was read from file");
-		}
-		
-		if(!listAvailable)
-		{
-			try {
-				FileOutputStream f = new FileOutputStream("n=" + n);
-				ObjectOutputStream o = new ObjectOutputStream(f);
-				o.writeObject(this.lists.get(n-1));
-				o.close();
-			}catch(Exception e) {}
 			
 		}
+		
+		this.setText(finalSet[1]);
 		return finalSet;
 	}	
+	
 	
 	public boolean readListFromFile(int n)
 	{
@@ -81,20 +124,17 @@ public class Algorithms {
 	
 	public void createList(int n)
 	{
-		if(lists.size() <= n)
-			for(int i  = 0; i < n; i++)
+		if(lists.size() < n)
+			for(int i = lists.size(); i < n; i++)
 				lists.add(new SerializableList());
-		else
-			lists.set(n-1, new SerializableList());
+
 		System.out.println("list size: " + lists.size());
 	}
 	
 	
 	public SerializableList getList(int n)
 	{
-		//System.out.println(n-1);
-		//if(lists.get(n-1) == null)
-			//System.out.println("list is null, sorry :(");
+		
 		return lists.get(n-1);
 	}
 	
@@ -135,13 +175,6 @@ public class Algorithms {
 					s2 += " " + tmp +"\n";
 			}
 			fr.close();
-			
-			//System.out.println("fix s");
-			//s = s.replaceAll("\\.", "").replaceAll("\\?", "").replaceAll("!", "").replaceAll("\\;", "").replaceAll("\\(", "").replaceAll("\\)", "").replaceAll("[\"'\u2018\u2019\u201c\u201d]", "").replaceAll(",", "").replaceAll("\\*", "");
-			
-			//System.out.println("fix s2");
-			//s2 = s2.replaceAll("\\.", "").replaceAll("\\?", "").replaceAll("!", "").replaceAll("\\;", "").replaceAll("\\(", "").replaceAll("\\)", "").replaceAll("[\"'\u2018\u2019\u201c\u201d]", "").replaceAll(",", "").replaceAll("\\*", "");
-			
 			
 			
 			return new String[]{s, s2};
@@ -240,46 +273,42 @@ public class Algorithms {
 	
 	public void createNGram()
 	{
-	
 		int i = 0;
-		while(text.charAt(i) == ' ')
+		String tmp[] = null;
+		
+		while(this.text.charAt(i) == ' ')
+		{
 			i++;
+		}
 		
+		text = text.substring(i, text.length());
+		tmp = text.split(" ");
 		
-		int marker = 0, shiftmarker = 0;
-		int start = i;
-		for(; i < text.length(); i++)
+		System.out.println("text length: " + tmp.length);
+		
+		for(i = 0; i < tmp.length; i++)
 		{
 			
-			
-			if(text.charAt(i) == ' ')
+			if(i%100 == 0)
 			{
-				
-				while(i < text.length() && text.charAt(i) == ' ')
-					i++;
-				i--;
-				
-				if(shiftmarker == 0)
- 					shiftmarker = i;
-				
-				marker++;
-			
-				if(marker == n)
-				{
-					marker = 0;
-					
-					String tmp = text.substring(start, i).replace("\n", "");
-					//System.out.println(" ---> " + tmp);
-					lists.get(n-1).addWord(tmp);
-						
-					i = shiftmarker + 1;
-					start = i;
-					shiftmarker = 0;
-				}
-
+				System.out.println("completed: " + (((float)i/tmp.length) * 100) + " %");
 			}
+			
+			String n_words = "";
+		
+			for(int length = 0; length < n && i < tmp.length; length++)
+			{
+				n_words += tmp[i] + " ";
+				i++;
+				System.out.println(n_words);
+			}
+			n_words = n_words.substring(0, n_words.length()-1);
+			this.getList(this.n).addWord(n_words);
+			
+			if(i == tmp.length)
+				return;
+			i = i - n;
 		}
-
 	}
 
 
@@ -328,7 +357,7 @@ public class Algorithms {
 		return filePaths.indexOf(path);
 	}
 	
-	public void createTemporyTestText(String path)
+	public void createTemporyTestText(String path, double errorRate)
 	{
 		String document = "", tmp = ""; String[] split_document;
 		try {
@@ -349,12 +378,12 @@ public class Algorithms {
 			{
 				if(i %50 == 0)
 				{
-					System.out.println("completed: " + (((float)i/split_document.length) * 100) + " %");
+					//System.out.println("completed: " + (((float)i/split_document.length) * 100) + " %");
 				}
 				//System.out.println("split word " + split_document[i]);
 				if(!split_document[i].equals(" ") && !split_document[i].equals(System.lineSeparator()) && !split_document[i].equals("\t") && !split_document[i].equals(""))
 				{
-					if(StateMachine.getFSM().verifyWord(split_document[i].toLowerCase()))
+					if(StemmingClass.checkWord(split_document[i].toLowerCase()))
 					{
 						//System.out.println("word: " + split_document[i]);
 						tmp += " " + split_document[i];
@@ -374,7 +403,7 @@ public class Algorithms {
 				
 			}
 			System.out.println("end");
-			tmp = insertErrors(tmp);
+			tmp = insertErrors(tmp, errorRate);
 			
 			
 			bw.write(tmp);
@@ -388,21 +417,26 @@ public class Algorithms {
 		}
 	}
 	
-	private String insertErrors(String s)
+	private String insertErrors(String s, double errorRate)
 	{
 		System.out.println("inserting errors");
 		String tmp = "";
 		
 		for(int i = 0; i < s.length(); i++)
 		{
+			if(i%200==0)
+			{
+				System.out.println("error insert loop");
+				System.out.println("completed: " + (((float)i/s.length()) * 100) + " %");
 			
+			}
 			if(s.charAt(i) <= 'Z' && s.charAt(i) >= 'A')
 			{
-				tmp += changeCharacter(s.charAt(i), .03);
+				tmp += changeCharacter(s.charAt(i), errorRate);
 			}else
 			if(s.charAt(i) <= 'z' && s.charAt(i) >= 'a')
 			{
-				tmp += changeCharacter(s.charAt(i), .03);
+				tmp += changeCharacter(s.charAt(i), errorRate);
 			}else
 				tmp += s.charAt(i);
 			
@@ -441,8 +475,12 @@ public class Algorithms {
 			BufferedReader br = new BufferedReader(new FileReader(path));
 			BufferedWriter bw = new BufferedWriter(new FileWriter("sample"));
 			System.out.println("reading test text");
+			
+			int lineNum = 0;
 			while((tmp = br.readLine()) != null)
 			{
+				lineNum++;
+				System.out.println("reading line: " + lineNum);
 				document += tmp + " ";
 			}
 			
@@ -500,7 +538,6 @@ public class Algorithms {
 						this.appendWordToText(n_words[n_words.length-1] + " ");
 					
 					}else
-					if(!StateMachine.getFSM().verifyWord(n_words[n_words.length-1].toLowerCase()))
 					{
 						if(n_words[n_words.length-1].charAt(n_words[n_words.length-1].length()-1) != ']' && n_words[n_words.length-1].charAt(0) != '[')
 						{
@@ -510,6 +547,7 @@ public class Algorithms {
 						}
 						else
 						{
+						
 							this.appendWordToText(n_words[n_words.length-1] + " ");
 						}
 
@@ -521,6 +559,8 @@ public class Algorithms {
 			br.close();
 			bw.close();
 		}catch(Exception e) {
+		
+			System.out.println("Exception");
 			return;
 		}
 	}	
@@ -595,6 +635,7 @@ public class Algorithms {
 	
 	public String placeWord(String oldWord, String newWord)
 	{
+		
 		int start = 0; int end = oldWord.length();
 		char cs = oldWord.charAt(0);
 		char ce = oldWord.charAt(oldWord.length()-1);
@@ -620,7 +661,7 @@ public class Algorithms {
 		return newWord;
 	}
 	
-	public void writeCorrectedTextFile(String pathToOriginal)
+	public void writeCorrectedTextFile(String pathToOriginal, String outputPath)
 	{
 	
 		System.out.println("write new text");
@@ -629,7 +670,7 @@ public class Algorithms {
 		String[] correctedWords = this.correctedText.split(" ");
 	
 		try {
-			bw = new BufferedWriter(new FileWriter("correctedText"));
+			bw = new BufferedWriter(new FileWriter(outputPath));
 			br = new BufferedReader(new FileReader(pathToOriginal));
 
 			int index = 0;
@@ -646,10 +687,26 @@ public class Algorithms {
 					
 						if(!oldWords[i].equals(System.lineSeparator()) && !oldWords[i].equals("") && !oldWords[i].equals(" "))
 						{	
+							char cList[] = {'.', '!',':','?'};
+							boolean b = true;
+							
 							//System.out.println(oldWords[i] + " --> " + correctedWords[index]);
-							textToWrite += this.placeWord(oldWords[i], correctedWords[index]) + " ";
+							for(int j = 0; j < cList.length; j++)
+							{
+								if(oldWords[i].equals("" + cList[j]) || oldWords[i].charAt(0) == cList[j] && oldWords[i].charAt(oldWords[i].length()-1) == cList[j])
+								{
+								
+									textToWrite += oldWords[i] + " ";	
+									b = false;
+								}
+							}
+							
+							if(b)
+							{
+								textToWrite += this.placeWord(oldWords[i], correctedWords[index]) + " ";
 					
-							index++;
+								index++;
+							}
 						}else
 						{	
 								textToWrite += oldWords[i] + " "; 
