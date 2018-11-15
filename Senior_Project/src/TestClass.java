@@ -253,11 +253,46 @@ public class TestClass {
 		System.out.println("word: " + StemmingClass.checkWord("hats"));
 		System.out.println(StateMachine.getFSM().verifyWord("hats"));
 		
+
 		System.out.println(StateMachine.getFSM().verifyWord("siblings"));
 		System.out.println("word: " + StemmingClass.checkWord("siblings"));
 		System.out.println(StateMachine.getFSM().verifyWord("siblings"));
 		
+		System.out.println("\nxxxten");
+		System.out.println(StateMachine.getFSM().verifyWord("xxxten"));
+		System.out.println("word: " + StemmingClass.checkWord("xxxten"));
+		System.out.println(StateMachine.getFSM().verifyWord("xxxten"));
+		
+		System.out.println("\nxxxous");
+		System.out.println(StateMachine.getFSM().verifyWord("xxxous"));
+		System.out.println("word: " + StemmingClass.checkWord("xxxous"));
+		System.out.println(StateMachine.getFSM().verifyWord("xxxous"));
+		
+		System.out.println("\nxxx's");
+		System.out.println(StateMachine.getFSM().verifyWord("xxx's"));
+		System.out.println("word: " + StemmingClass.checkWord("xxx's"));
+		System.out.println(StateMachine.getFSM().verifyWord("xxx's"));
+		
+		System.out.println("\nxxxious");
+		System.out.println(StateMachine.getFSM().verifyWord("xxxious"));
+		System.out.println("word: " + StemmingClass.checkWord("xxxious"));
+		System.out.println(StateMachine.getFSM().verifyWord("xxxious"));
 	
+		
+		System.out.println("\nxxxious");
+		System.out.println(StateMachine.getFSM().verifyWord("xxx's"));
+		System.out.println("word: " + StemmingClass.checkWord("xxx's"));
+		System.out.println(StateMachine.getFSM().verifyWord("xxx's"));
+		
+		System.out.println("\nxxxd");
+		System.out.println(StateMachine.getFSM().verifyWord("xxxd"));
+		System.out.println("word: " + StemmingClass.checkWord("xxxd"));
+		System.out.println(StateMachine.getFSM().verifyWord("xxxd"));
+		
+		System.out.println("\nxxxed");
+		System.out.println(StateMachine.getFSM().verifyWord("xxxed"));
+		System.out.println("word: " + StemmingClass.checkWord("xxxed"));
+		System.out.println(StateMachine.getFSM().verifyWord("xxxed"));
 	}*/
 	
 	
@@ -349,12 +384,12 @@ public class TestClass {
 		}
 		
 		System.out.println("create files");
-		int max_n = 3;
-		int trials = 1;
+		int max_n = 5;
+		int trials = 15;
 		
 		
 		
-		/*String test[] = alg.runFiles();
+		String test[] = alg.runFiles();
 
 		FileWriter w = new FileWriter("test1");
 		w.write(test[0]);
@@ -362,7 +397,7 @@ public class TestClass {
 		
 		w = new FileWriter("test2");
 		w.write(test[1]);
-		w.close();*/
+		w.close();
 		
 		alg.createList(max_n);
 		for(int i = 1; i <= max_n; i++)
@@ -374,12 +409,12 @@ public class TestClass {
 
 		for(int i = 0; i < trials; i++)
 		{
-			BufferedWriter bw = new BufferedWriter(new FileWriter("RESULTS", true));
+			BufferedWriter bw = new BufferedWriter(new FileWriter("RESULTS-2", true));
 			bw.write(System.lineSeparator() + "TRIAL #" + (i+1) + "" + System.lineSeparator());
 			bw.close();
-			alg.createTemporyTestText("test2", .04);
+			alg.createTemporyTestText("test2", .03);
 			
-			for(int n = 1; n <= max_n; n++)
+			for(int n = 0; n <= max_n; n++)
 			{
 				bw = new BufferedWriter(new FileWriter("RESULTS", true));
 				
@@ -389,8 +424,6 @@ public class TestClass {
 				
 				System.out.println("n and text set for analysis");
 		
-			
-				//alg.getList(n).printAll(0, n);
 				
 				alg.makeCorrectionToTestText("modifiedTestText");
 				alg.writeCorrectedTextFile("modifiedTestText", "correctedText");
@@ -399,17 +432,13 @@ public class TestClass {
 				bw.write("n = " + n + "" + System.lineSeparator());
 				bw.write(System.lineSeparator() + "BEFORE CHANGES" + System.lineSeparator());
 				bw.write("similarities: " + results[0] + "    differences:  " + results[1] + System.lineSeparator());
-				bw.write("Percent Errors in Text: " + (int)((float)results[1]/(results[1] + results[0]) * 100));
-				//System.out.println("similarities: " + results[0] + "    differences:  " + results[1]);
+				bw.write("Percent Errors in Text: " + ((float)results[1]/(results[1] + results[0]) * 100));
 				
-				//System.out.println("AFTER CHANGES");
+				
 				results = alg.comparTwoDocuments("correctedText", "test2");
-				//System.out.println("similarities: " + results[0] + "    differences:  " + results[1]);
-				
-				
 				bw.write(System.lineSeparator() + "AFTER CHANGES");
 				bw.write(System.lineSeparator() + "similarities: " + results[0] + "    differences:  " + results[1]);
-				bw.write(System.lineSeparator() + "Percent Errors in Text: " + (int)((float)results[1]/(results[1] + results[0]) * 100));
+				bw.write(System.lineSeparator() + "Percent Errors in Text: " + ((float)results[1]/(results[1] + results[0]) * 100));
 				bw.write(System.lineSeparator() + "-----------------------------" + System.lineSeparator());
 				
 				bw.close();

@@ -378,7 +378,7 @@ public class Algorithms {
 			{
 				if(i %50 == 0)
 				{
-					//System.out.println("completed: " + (((float)i/split_document.length) * 100) + " %");
+					System.out.println("completed: " + (((float)i/split_document.length) * 100) + " %");
 				}
 				//System.out.println("split word " + split_document[i]);
 				if(!split_document[i].equals(" ") && !split_document[i].equals(System.lineSeparator()) && !split_document[i].equals("\t") && !split_document[i].equals(""))
@@ -519,6 +519,9 @@ public class Algorithms {
 				}
 				
 				int length = 0; 
+				if(n==0) 
+					nPhrase += split_document[i] + " ";
+				
 				for(length = 0; length < n; i++)
 				{
 					nPhrase += split_document[i] + " ";
@@ -595,6 +598,9 @@ public class Algorithms {
 			//System.out.println("returning with 1 candidate");
 			return ed.getCandidates().get(0);
 		}
+		
+		if(n == 0)
+			return list[list.length-1];
 		
 		ArrayList<String> candidates = new ArrayList<String>();
 		ArrayList<Integer> occurences = new ArrayList<Integer>();

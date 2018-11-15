@@ -47,13 +47,49 @@ public class StemmingClass {
 					return newWord;
 			}else
 			{
-				newWord = w.substring(0, w.length()-4);
+				newWord = w.substring(0, w.length()-6);
 				if(verify(newWord))
 					return newWord;
 			}
 		}
 		
+		if(w.substring(w.length()-3, w.length()).equalsIgnoreCase("ous"))
+		{
+			newWord += w.substring(0, w.length()-4);
+			
+			if(w.charAt(w.length()-4) == 'i')
+			{
+				newWord += 'y';
+				
+				if(verify(newWord));
+					return newWord;
+			}else
+			{
+				newWord = w.substring(0, w.length()-5);
+				if(verify(newWord))
+					return newWord;
+			}
+		}
 		
+		if(w.substring(w.length()-2, w.length()).equalsIgnoreCase("en"))
+		{
+			newWord += w.substring(0, w.length()-3);
+			
+			if(verify(newWord));
+				return newWord;
+			
+		}
+		
+		if(w.substring(w.length()-2, w.length()).equalsIgnoreCase("'s"))
+		{
+			newWord += w.substring(0, w.length()-3);
+			
+			if(verify(newWord));
+				return newWord;
+			
+		}
+		
+	
 		if(w.substring(w.length()-4, w.length()).equalsIgnoreCase("less"))
 		{
 			newWord += w.substring(0, w.length()-5);
@@ -88,6 +124,26 @@ public class StemmingClass {
 				if(verify(newWord))
 					return newWord;
 			} 
+		}
+		
+
+		if(w.substring(w.length()-2, w.length()).equalsIgnoreCase("ed"))
+		{
+			newWord += w.substring(0, w.length()-3);
+			
+			if(verify(newWord));
+				return newWord;
+			
+		}
+		
+		if(w.substring(w.length()-1, w.length()).equalsIgnoreCase("d"))
+		{
+			newWord += w.substring(0, w.length()-1);
+			
+		
+			if(verify(newWord));
+				return newWord;
+			
 		}
 		
 		if(w.substring(w.length()-1, w.length()).equalsIgnoreCase("s"))
