@@ -444,14 +444,21 @@ public class Algorithms {
 		return tmp;
 	}
 	
-	private char changeCharacter(char original, double errorRate)
+	private String changeCharacter(char original, double errorRate)
 	{
-		char newChar = original;
+		String newChar = original + "";
 		double val = Math.random();
-		
+		double delete = ((double)errorRate/27);
+	
 		if(val <= errorRate)
 		{
-			newChar = (char)((int)((Math.random() * 26) + 97)); // System.out.println("char is: " + newChar);
+			if(val <= delete)
+			{	
+				System.out.println("DELETE");
+				newChar = "";
+			}
+			else
+				newChar = (char)((int)((Math.random() * 26) + 97)) + "";
 		}
 		
 		return newChar;
@@ -599,12 +606,20 @@ public class Algorithms {
 			return ed.getCandidates().get(0);
 		}
 		
-		if(n == 0)
-			return list[list.length-1];
-		
 		ArrayList<String> candidates = new ArrayList<String>();
 		ArrayList<Integer> occurences = new ArrayList<Integer>();
 		
+		//test using a different method (ed dist gets to randomly choose multiple candidation if n == 0)
+		if(n == 0)
+		{
+			//return list[list.length-1];
+			for(int i = 0; i < ed.getCandidates().size(); i++)
+			{
+				occurences.add(1);
+			}
+			return this.getWord(ed.getCandidates(), occurences);
+		}
+			
 		for(int j = 0; j < ed.getCandidates().size(); j++)
 		{
 			tmp = "";

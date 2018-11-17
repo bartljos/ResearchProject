@@ -416,7 +416,7 @@ public class TestClass {
 			
 			for(int n = 0; n <= max_n; n++)
 			{
-				bw = new BufferedWriter(new FileWriter("RESULTS", true));
+				bw = new BufferedWriter(new FileWriter("RESULTS-2", true));
 				
 				alg.setN(n);
 				alg.readListFromFile(n);
