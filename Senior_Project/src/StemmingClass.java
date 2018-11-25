@@ -7,16 +7,17 @@ public class StemmingClass {
 		w = w.replaceAll(System.lineSeparator(), "").replaceAll("\\.", "").replaceAll(",", "").replaceAll(";", "").replaceAll("\\?", "").replaceAll("\\!", "").replaceAll("\"", "").replaceAll(":", "");
 		w = w.replaceAll("\\(", "").replaceAll("\\)","");
 		
-		//try {
+		try {
 		if(StateMachine.getFSM().verifyWord(w))
 			return true;
-		//}catch(Exception e) {return false;}
+		}catch(Exception e) {return false;}
 		
 		w = w.toLowerCase();
 		
 		try {
 		if(!checkRoots(w).equals(""))
 		{
+			System.out.println("add " + w);
 			StateMachine.getFSM().addWord(w);
 			StateMachine.getFSM().buildCharacterList();
 			StateMachine.getFSM().buildState(w);

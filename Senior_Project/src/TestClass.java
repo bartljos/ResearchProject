@@ -370,6 +370,8 @@ public class TestClass {
 	@Test
 	public void testDictionary() throws IOException
 	{
+	
+		Thread.currentThread().setPriority(Thread.MAX_PRIORITY);
 		String[] fileList = getFileSystem();
 		
 		
@@ -384,7 +386,7 @@ public class TestClass {
 		}
 		
 		System.out.println("create files");
-		int max_n = 5;
+		int max_n = 2;
 		int trials = 15;
 		
 		
@@ -407,34 +409,39 @@ public class TestClass {
 			alg.getList(i).printAll(0, i, true);
 		}
 
-		for(int i = 0; i < trials; i++)
+		
+		String filename =  "RESULTS";
+		for(int i = 2; i < trials; i++)
 		{
-			BufferedWriter bw = new BufferedWriter(new FileWriter("RESULTS-2", true));
+			BufferedWriter bw = new BufferedWriter(new FileWriter(filename, true));
 			bw.write(System.lineSeparator() + "TRIAL #" + (i+1) + "" + System.lineSeparator());
 			bw.close();
 			alg.createTemporyTestText("test2", .03);
 			
 			for(int n = 0; n <= max_n; n++)
 			{
-				bw = new BufferedWriter(new FileWriter("RESULTS-2", true));
+				
+			
+				bw = new BufferedWriter(new FileWriter(filename, true));
 				
 				alg.setN(n);
-				alg.readListFromFile(n);
 			
 				
 				System.out.println("n and text set for analysis");
 		
 				
-				alg.makeCorrectionToTestText("modifiedTestText");
-				alg.writeCorrectedTextFile("modifiedTestText", "correctedText");
-		
 				int[] results = alg.comparTwoDocuments("modifiedTestText", "test2");
 				bw.write("n = " + n + "" + System.lineSeparator());
 				bw.write(System.lineSeparator() + "BEFORE CHANGES" + System.lineSeparator());
 				bw.write("similarities: " + results[0] + "    differences:  " + results[1] + System.lineSeparator());
 				bw.write("Percent Errors in Text: " + ((float)results[1]/(results[1] + results[0]) * 100));
+				bw.close();
 				
 				
+				alg.makeCorrectionToTestText("modifiedTestText");
+				alg.writeCorrectedTextFile("modifiedTestText", "correctedText");
+		
+				bw = new BufferedWriter(new FileWriter(filename, true));
 				results = alg.comparTwoDocuments("correctedText", "test2");
 				bw.write(System.lineSeparator() + "AFTER CHANGES");
 				bw.write(System.lineSeparator() + "similarities: " + results[0] + "    differences:  " + results[1]);

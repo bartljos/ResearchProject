@@ -69,8 +69,8 @@ public class Algorithms {
 			{
 				System.out.println("creating n gram");
 				if(this.text.equals(""))
-					this.setText(this.getWordStringFromFile("test2"));
-				System.out.println(text);
+					this.setText(this.getWordStringFromFile("test1"));
+				
 				this.createNGram();
 			}else
 				System.out.println("List was read from file");
@@ -98,13 +98,12 @@ public class Algorithms {
 			System.out.println("now working on: " + filePaths.get(i));
 			System.out.println("parsing file");
 			tmp = this.setFileAsSource(filePaths.get(i));
-			finalSet[0] += tmp[0] + '\n';
-			finalSet[1] += tmp[1] +'\n';
-			
-			
+			finalSet[0] += tmp[0] + System.lineSeparator();
+			finalSet[1] += tmp[1] + System.lineSeparator();
+	
 		}
 		
-		this.setText(finalSet[1]);
+		this.setText(finalSet[0]);
 		return finalSet;
 	}	
 	
@@ -170,9 +169,9 @@ public class Algorithms {
 				}
 				
 				if(split == false)
-					s += " " + tmp + "\n";
+					s += " " + tmp + System.lineSeparator();
 				else
-					s2 += " " + tmp +"\n";
+					s2 += " " + tmp + System.lineSeparator();
 			}
 			fr.close();
 			
@@ -187,8 +186,14 @@ public class Algorithms {
 	public void setText(String text)
 	{
 		this.text = text;
-		this.text = text.replaceAll("\n", "").replaceAll("\\.", "").replaceAll("\\?", "").replaceAll("!", "");
-		this.text = this.text.replaceAll("\\;", "").replaceAll("\\(", "").replaceAll("\\)", "").replaceAll("[\u2018\u2019\u201c\u201d]", "");
+		
+		while(this.text.contains("  "))
+		{
+			this.text = this.text.replaceAll("  ", " ");
+		}
+		
+		this.text = this.text.replaceAll("\n", "").replaceAll("\\.", "").replaceAll("\\?", "").replaceAll("!", "");
+		this.text = this.text.replaceAll("\\;", "").replaceAll("\\(", "").replaceAll("\\)", "").replaceAll(System.lineSeparator(), "").replaceAll("\n", "").replaceAll("\r", "").replaceAll("\r\n", "");
 		this.text = this.text.replaceAll(",", "").replaceAll("\\*", "").replaceAll("  ", " ").replaceAll("\\[", "");
 		this.text = this.text.replaceAll("]", "").replaceAll("_", "").replaceAll(",", "").replaceAll("\"", "").replaceAll(" '",  " ");
 	
@@ -198,6 +203,7 @@ public class Algorithms {
 	{
 		this.n = n;
 	}
+	
 	public String useEditDistance(String s)
 	{
 		ed = new EditDistance();
@@ -300,7 +306,7 @@ public class Algorithms {
 			{
 				n_words += tmp[i] + " ";
 				i++;
-				System.out.println(n_words);
+				//System.out.println(n_words);
 			}
 			n_words = n_words.substring(0, n_words.length()-1);
 			this.getList(this.n).addWord(n_words);
@@ -386,17 +392,17 @@ public class Algorithms {
 					if(StemmingClass.checkWord(split_document[i].toLowerCase()))
 					{
 						//System.out.println("word: " + split_document[i]);
-						tmp += " " + split_document[i];
+						tmp += split_document[i] + " ";
 						wordIndex++;
 					}else
 					{
-						tmp += " [" + wordIndex + "]";
+						tmp += "[" + wordIndex + "] ";
 						wordIndex++;
 					}
 				}else
 				{
 					if(split_document[i].equals(System.lineSeparator()))
-						tmp += split_document[i];
+						tmp += split_document[i]+ " ";
 					else
 						tmp += split_document[i] + " ";
 				}
@@ -424,19 +430,25 @@ public class Algorithms {
 		
 		for(int i = 0; i < s.length(); i++)
 		{
+			
 			if(i%200==0)
 			{
 				System.out.println("error insert loop");
 				System.out.println("completed: " + (((float)i/s.length()) * 100) + " %");
+				
 			
 			}
-			if(s.charAt(i) <= 'Z' && s.charAt(i) >= 'A')
+			
+			if(s.charAt(i) <= 'z' && s.charAt(i) >= 'a' || s.charAt(i) <= 'Z' && s.charAt(i) >= 'A')
 			{
-				tmp += changeCharacter(s.charAt(i), errorRate);
-			}else
-			if(s.charAt(i) <= 'z' && s.charAt(i) >= 'a')
-			{
-				tmp += changeCharacter(s.charAt(i), errorRate);
+				if(i > 1 && i < s.length()-1)
+				{	
+					if((s.charAt(i-1) <= 'z' && s.charAt(i-1) >= 'a' || s.charAt(i-1) <= 'Z' && s.charAt(i-1) >= 'A') || (s.charAt(i+1) <= 'z' && s.charAt(i+1) >= 'a' || s.charAt(i+1) <= 'Z' && s.charAt(i+1) >= 'A'))
+						tmp += changeCharacter(s.charAt(i), errorRate, true);
+					else
+						tmp += changeCharacter(s.charAt(i), errorRate, false);
+				}else
+					tmp += changeCharacter(s.charAt(i), errorRate, false);
 			}else
 				tmp += s.charAt(i);
 			
@@ -444,21 +456,24 @@ public class Algorithms {
 		return tmp;
 	}
 	
-	private String changeCharacter(char original, double errorRate)
+	private String changeCharacter(char original, double errorRate, boolean delete)
 	{
 		String newChar = original + "";
 		double val = Math.random();
-		double delete = ((double)errorRate/27);
 	
 		if(val <= errorRate)
 		{
-			if(val <= delete)
-			{	
-				System.out.println("DELETE");
-				newChar = "";
-			}
+			int letter = (int)(Math.random() * (double)27);
+			
+			if(letter >= 26 && delete)
+				return "";
 			else
-				newChar = (char)((int)((Math.random() * 26) + 97)) + "";
+			{	
+				if(letter >= 26)
+					letter = letter -1;
+				newChar = (char)((int)(letter + 97)) + "";
+				
+			}
 		}
 		
 		return newChar;
@@ -487,7 +502,7 @@ public class Algorithms {
 			while((tmp = br.readLine()) != null)
 			{
 				lineNum++;
-				System.out.println("reading line: " + lineNum);
+				//System.out.println("reading line: " + lineNum);
 				document += tmp + " ";
 			}
 			
@@ -520,6 +535,7 @@ public class Algorithms {
 			
 			for(i = 0; i < split_document.length; i++)
 			{	
+	
 				if(i%200 == 0)
 				{
 					System.out.println("completed: " + (((float)i/split_document.length) * 100) + " %");
@@ -637,12 +653,11 @@ public class Algorithms {
 			
 			if(result >= 0)
 			{
-				//System.out.println("good");
+				//System.out.println("tmp:  " + tmp);
 				//System.out.print("\n [" + j + "] \n");
 				candidates.add(this.getList(this.n).getWordList().get(result));
 				occurences.add(this.getList(this.n).getOccurences().get(result));
-			}//else
-			//	System.out.println("bad");
+			}
 			
 		}
 		
@@ -797,7 +812,7 @@ public class Algorithms {
 			
 			for(int i = 0; i < words1.length && i < words2.length; i++)
 			{
-				//System.out.println(words1[i] + "   " + words2[i]);
+				System.out.println(words1[i] + "   " + words2[i]);
 				if(words1[i].equals(words2[i]))
 				{
 					similarities++;

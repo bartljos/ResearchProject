@@ -94,7 +94,7 @@ public class EditDistance {
 		{
 			this.candidates.add(w2.substring(1));
 		}else
-			if(ed < threshold && ed > 0)
+			if(ed < threshold)
 			{
 				threshold = ed; //System.out.println(candidates.toString());
 				this.candidates.clear();
