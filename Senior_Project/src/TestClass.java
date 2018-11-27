@@ -309,7 +309,7 @@ public class TestClass {
 	}*/
 	
 	
-	/*@Test
+	@Test
 	public void testLiveDemo() throws InterruptedException, IOException
 	{
 		Algorithms alg = new Algorithms();
@@ -365,9 +365,9 @@ public class TestClass {
 			test.repaint();
 			frame.repaint();
 		}
-	}*/
+	}
 	
-	@Test
+	/*@Test
 	public void testDictionary() throws IOException
 	{
 	
@@ -386,7 +386,7 @@ public class TestClass {
 		}
 		
 		System.out.println("create files");
-		int max_n = 2;
+		int max_n = 8;
 		int trials = 15;
 		
 		
@@ -451,7 +451,7 @@ public class TestClass {
 				bw.close();
 			}
 		}
-	}
+	}*/
 
 	/*@Test
 	public void testComparingDocs()
