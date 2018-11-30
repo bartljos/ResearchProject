@@ -1,34 +1,9 @@
-import static org.junit.Assert.*;
 
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.GridLayout;
-import java.awt.Point;
-import java.awt.Toolkit;
-import java.io.BufferedInputStream;
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.Collections;
-
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-
 import org.junit.Before;
 import org.junit.Test;
-
-import com.sun.glass.ui.Screen;
-
-import DemoComponents.Display;
-import EditDistance.EditDistance;
 import StateMachine.StateMachine;
 
 public class TestClass {
@@ -312,59 +287,8 @@ public class TestClass {
 	@Test
 	public void testLiveDemo() throws InterruptedException, IOException
 	{
-		Algorithms alg = new Algorithms();
-		alg.createList(3);
-		for(int i = 1; i <=3; i++)
-			alg.readListFromFile(i);
-		
-		JFrame frame = new JFrame("Live Demo");
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.setLayout(new GridLayout(3,1));
-		
-		Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
-		int width = (int)((double)screen.getWidth()/3);
-		int height = (int)((double)screen.getHeight()/2);
-		
-		Point center = new Point(((screen.width/2) - (width/2)), ((screen.height/2) - (height/2)));
-		
-		frame.setSize(width, height);
-		frame.setLocation(center);
-		
-		
-		JTextField textBox = new JTextField();
-		Display test = new Display();
-		test.setBackground(Color.black);
-		frame.add(test);
-	
-		frame.add(new JPanel());
-		frame.add(textBox);
-		
-		test.setCurrentText("Test setting Text");
-		frame.setVisible(true);
-		
-		alg.setN(1);
-		while(true) {
-			BufferedWriter bw = new BufferedWriter(new FileWriter("exampleOutput"));
-			bw.write(textBox.getText());
-			bw.close();
-			
-			Thread.sleep(100);
-			alg.makeCorrectionToTestText("exampleOutput");
-			alg.writeCorrectedTextFile("exampleOutput", "newOutput");
-			
-			BufferedReader br = new BufferedReader(new FileReader("newOutput"));
-			String tmp = "";
-			String newText = "";
-			while((tmp = br.readLine()) != null)
-			{
-				newText += tmp + " ";
-			}
-			br.close();
-			
-			test.setCurrentText(newText);
-			test.repaint();
-			frame.repaint();
-		}
+		DemoClass demo = new DemoClass();
+		demo.startDemo();
 	}
 	
 	/*@Test
@@ -410,7 +334,7 @@ public class TestClass {
 		}
 
 		
-		String filename =  "RESULTS";
+		String filename =  "RESULTS-2";
 		for(int i = 2; i < trials; i++)
 		{
 			BufferedWriter bw = new BufferedWriter(new FileWriter(filename, true));
@@ -451,7 +375,7 @@ public class TestClass {
 				bw.close();
 			}
 		}
-	}*/
+	}*?
 
 	/*@Test
 	public void testComparingDocs()

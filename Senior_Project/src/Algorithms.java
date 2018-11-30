@@ -485,6 +485,11 @@ public class Algorithms {
 		this.correctedText += word;
 	}
 	
+	public void setCorrectedText(String text)
+	{
+		this.correctedText = text;
+	}
+	
 	public String getCorrectedText()
 	{
 		return this.correctedText;
@@ -498,11 +503,9 @@ public class Algorithms {
 			BufferedWriter bw = new BufferedWriter(new FileWriter("sample"));
 			System.out.println("reading test text");
 			
-			int lineNum = 0;
 			while((tmp = br.readLine()) != null)
 			{
-				lineNum++;
-				//System.out.println("reading line: " + lineNum);
+
 				document += tmp + " ";
 			}
 			
@@ -609,7 +612,7 @@ public class Algorithms {
 				tmp = tmp.substring(0, tmp.length()-1);
 			}
 			else
-				ed.getEditDistance(tmp, dictionary.get(i));
+				ed.getEditDistance(tmp.toLowerCase(), dictionary.get(i));
 		}
 		//System.out.println(ed.getCandidates().toString());
 		
